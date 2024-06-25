@@ -110,7 +110,7 @@ run(dataSource, database, async (ctx) => {
             console.log('LOG', log)
         }
 
-        if (isEvent('TradeEvent', log, abi)) {
+        if (isEvent('TradeOrderEvent', log, abi)) {
             const idSource = `${log.base_token.bits}-${log.order_matcher.bits}-${log.seller.bits}-${log.buyer.bits}-${log.trade_size
                 }-${log.trade_price}-${log.sell_order_id}-${log.buy_order_id}-${tai64ToDate(log.timestamp)}-${log.tx_id}`
             const id = crypto.createHash('sha256').update(idSource).digest('hex')
@@ -127,16 +127,13 @@ run(dataSource, database, async (ctx) => {
 
             let event = new TradeOrderEvent({
                 id: id,
-                baseSellOrderId: log.base_token.bits,
+                baseSellOrderId: log.base_sell_order_id,
+                baseBuyOrderId: log.base_buy_order_id,
+                txId: log.tx_id,
                 orderMatcher: log.order_matcher.bits,
-                // seller: log.seller.bits,
-                // buyer: log.buyer.bits,
                 tradeSize: BigInt(log.trade_size),
                 tradePrice: BigInt(log.trade_price),
-                // sellOrder: sellOrder,
-                // buyOrder: buyOrder,
                 timestamp: tai64ToDate(log.timestamp).toString(),
-                txId: log.tx_id,
             })
             tradeOrderEvents.set(event.id, event)
         }
