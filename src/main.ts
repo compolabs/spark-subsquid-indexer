@@ -1,12 +1,12 @@
-import {run} from '@subsquid/batch-processor'
-import {augmentBlock, Block} from '@subsquid/fuel-objects'
-import {DataHandlerContext, DataSourceBuilder} from '@subsquid/fuel-stream'
-import {Store, TypeormDatabase} from '@subsquid/typeorm-store'
-import {OrderbookAbi} from './OrderbookAbi'
+import { run } from '@subsquid/batch-processor'
+import { augmentBlock, Block } from '@subsquid/fuel-objects'
+import { DataHandlerContext, DataSourceBuilder } from '@subsquid/fuel-stream'
+import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
+import { OrderbookAbi } from './OrderbookAbi'
 //import { Contract } from "./model";
-import {assertNotNull} from '@subsquid/util-internal'
-import {_abi} from './OrderbookAbi__factory'
-import {transcode} from 'buffer'
+import { assertNotNull } from '@subsquid/util-internal'
+import { _abi } from './OrderbookAbi__factory'
+import { transcode } from 'buffer'
 import crypto from 'crypto'
 
 import {
@@ -19,9 +19,9 @@ import {
     ReceiptType,
     TransactionResultReceipt,
 } from 'fuels'
-import {OrderbookAbi__factory} from './OrderbookAbi__factory'
-import {decode} from 'punycode'
-import { Order, OrderType, OpenOrderEvent, CancelOrderEvent, MatchOrderEvent, TradeOrderEvent} from './model'
+import { OrderbookAbi__factory } from './OrderbookAbi__factory'
+import { decode } from 'punycode'
+import { Order, OrderType, OpenOrderEvent, CancelOrderEvent, MatchOrderEvent, TradeOrderEvent } from './model'
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
 const ORDERBOOK_ID = '0x4a2ce054e3e94155f7092f7365b212f7f45105b74819c623744ebcc5d065c6ac'
@@ -83,7 +83,7 @@ run(dataSource, database, async (ctx) => {
     let matchOrderEvents: Map<string, MatchOrderEvent> = new Map()
     let openOrderEvents: Map<string, OpenOrderEvent> = new Map()
     let cancelOrderEvents: Map<string, CancelOrderEvent> = new Map()
-    const receipts: (ReceiptLogData & {data: string})[] = []
+    const receipts: (ReceiptLogData & { data: string })[] = []
     for (let block of blocks) {
         for (let receipt of block.receipts) {
             if (receipt.contract == ORDERBOOK_ID && receipt.transaction?.status.type != 'FailureStatus') {
@@ -109,44 +109,43 @@ run(dataSource, database, async (ctx) => {
         if (log.tx_id === '0x9af2dde7333a23aae57d0d99cd4a2f84c78fbc8ac092aacd786ce11f8ab2719b') {
             console.log('LOG', log)
         }
-        
+
         if (isEvent('TradeEvent', log, abi)) {
-            const idSource = `${log.base_token.bits}-${log.order_matcher.bits}-${log.seller.bits}-${log.buyer.bits}-${
-                log.trade_size
-            }-${log.trade_price}-${log.sell_order_id}-${log.buy_order_id}-${tai64ToDate(log.timestamp)}-${log.tx_id}`
+            const idSource = `${log.base_token.bits}-${log.order_matcher.bits}-${log.seller.bits}-${log.buyer.bits}-${log.trade_size
+                }-${log.trade_price}-${log.sell_order_id}-${log.buy_order_id}-${tai64ToDate(log.timestamp)}-${log.tx_id}`
             const id = crypto.createHash('sha256').update(idSource).digest('hex')
 
             let sellOrder = orders.get(log.sell_order_id)
             if (!sellOrder) {
-                sellOrder = await ctx.store.get(Order, {where: {id: log.sell_order_id}})
+                sellOrder = await ctx.store.get(Order, { where: { id: log.sell_order_id } })
             }
 
             let buyOrder = orders.get(log.buy_order_id)
             if (!buyOrder) {
-                buyOrder = await ctx.store.get(Order, {where: {id: log.buy_order_id}})
+                buyOrder = await ctx.store.get(Order, { where: { id: log.buy_order_id } })
             }
 
             let event = new TradeOrderEvent({
                 id: id,
                 baseSellOrderId: log.base_token.bits,
                 orderMatcher: log.order_matcher.bits,
-                seller: log.seller.bits,
-                buyer: log.buyer.bits,
+                // seller: log.seller.bits,
+                // buyer: log.buyer.bits,
                 tradeSize: BigInt(log.trade_size),
                 tradePrice: BigInt(log.trade_price),
-                sellOrder: sellOrder,
-                buyOrder: buyOrder,
+                // sellOrder: sellOrder,
+                // buyOrder: buyOrder,
                 timestamp: tai64ToDate(log.timestamp).toString(),
                 txId: log.tx_id,
             })
-            spotTradeEvents.set(event.id, event)
+            tradeOrderEvents.set(event.id, event)
         }
     }
 
     await ctx.store.upsert([...orders.values()])
-    await ctx.store.save([...orderMatchEvents.values()])
-    await ctx.store.save([...marketCreateEvents.values()])
-    await ctx.store.save([...spotTradeEvents.values()])
+    // await ctx.store.save([...orderMatchEvents.values()])
+    // await ctx.store.save([...marketCreateEvents.values()])
+    await ctx.store.save([...tradeOrderEvents.values()])
 })
 
 function processOrder(log: any) {
@@ -154,23 +153,23 @@ function processOrder(log: any) {
     if (!order) {
         return new Order({
             id: log.order_id,
-            orderType: null,
-            trader: '0x-',
-            baseToken: '0x-',
-            baseSize: '0',
-            basePrice: BigInt(0),
+            // orderType: null,
+            // trader: '0x-',
+            // baseToken: '0x-',
+            // baseSize: '0',
+            // basePrice: BigInt(0),
             timestamp: tai64ToDate(log.timestamp).toString(),
         })
     }
     return new Order({
         id: log.order_id,
-        trader: order.trader.bits,
-        baseToken: order.base_token.bits,
-        baseSize: decodeI64(order.base_size),
-        basePrice: BigInt(order.base_price),
+        // trader: order.trader.bits,
+        // baseToken: order.base_token.bits,
+        // baseSize: decodeI64(order.base_size),
+        // basePrice: BigInt(order.base_price),
         timestamp: tai64ToDate(log.timestamp).toString(),
         orderType:
-            order.base_size.value === 0n ? null : order.base_size.negative ? SpotOrderType.sell : SpotOrderType.buy,
+            order.base_size.value === 0n ? undefined : order.base_size.negative ? OrderType.Sell : OrderType.Buy,
     })
 }
 
@@ -179,12 +178,12 @@ function processOrderOpenEvent(log: any, order: Order) {
     const timestamp = tai64ToDate(log.timestamp)
     const idSource = `${log.tx_id}-${timestamp}-${log.order_id}`
     const id = crypto.createHash('sha256').update(idSource).digest('hex')
-    let event = new SpotOrderChangeEvent({
+    let event = new OpenOrderEvent({
         id: id,
-        newBaseSize: order.baseSize,
-        identifier: 'OrderOpenEvent',
+        // newBaseSize: order.baseSize,
+        // identifier: 'OrderOpenEvent',
         timestamp: tai64ToDate(log.timestamp).toString(),
-        order: order,
+        // order: order,
         txId: log.tx_id,
     })
     return event
@@ -193,11 +192,11 @@ function processOrderOpenEvent(log: any, order: Order) {
 function createCancelledOrder(log: any) {
     return new Order({
         id: log.order_id,
-        orderType: null,
-        trader: '0x-',
-        baseToken: '0x-',
-        baseSize: '0',
-        basePrice: BigInt(0),
+        // orderType: null,
+        // trader: '0x-',
+        // baseToken: '0x-',
+        // baseSize: '0',
+        // basePrice: BigInt(0),
         timestamp: tai64ToDate(log.timestamp).toString(),
     })
 }
@@ -206,12 +205,12 @@ function processOrderCancelEvent(log: any, order: Order) {
     const timestamp = tai64ToDate(log.timestamp)
     const idSource = `${log.tx_id}-${timestamp}-${log.order_id}`
     const id = crypto.createHash('sha256').update(idSource).digest('hex')
-    let event = new SpotOrderChangeEvent({
+    let event = new CancelOrderEvent({
         id: id,
-        newBaseSize: order.baseSize,
-        identifier: 'OrderCancelEvent',
+        // newBaseSize: order.baseSize,
+        // identifier: 'OrderCancelEvent',
         timestamp: tai64ToDate(log.timestamp).toString(),
-        order: order,
+        // order: order,
         txId: log.tx_id,
     })
     return event
@@ -222,18 +221,18 @@ function processOrderMatchEvent(log: any, order: Order) {
     const timestamp = tai64ToDate(log.timestamp)
     const idSource = `${log.tx_id}-${timestamp}-${log.order_id}`
     const id = crypto.createHash('sha256').update(idSource).digest('hex')
-    let event = new SpotOrderChangeEvent({
+    let event = new MatchOrderEvent({
         id: id,
-        newBaseSize: order.baseSize,
-        identifier: 'OrderCancelEvent',
+        // newBaseSize: order.baseSize,
+        // identifier: 'OrderCancelEvent',
         timestamp: tai64ToDate(log.timestamp).toString(),
-        order: order,
+        // order: order,
         txId: log.tx_id,
     })
     return event
 }
 
-function decodeI64(i64: {readonly value: bigint; readonly negative: boolean}) {
+function decodeI64(i64: { readonly value: bigint; readonly negative: boolean }) {
     return (i64.negative ? '-' : '') + i64.value.toString()
 }
 
