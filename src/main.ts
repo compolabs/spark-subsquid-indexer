@@ -1,12 +1,12 @@
-import { run } from '@subsquid/batch-processor'
-import { augmentBlock, Block } from '@subsquid/fuel-objects'
-import { DataHandlerContext, DataSourceBuilder } from '@subsquid/fuel-stream'
-import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
-import { OrderbookAbi } from './OrderbookAbi'
+import {run} from '@subsquid/batch-processor'
+import {augmentBlock, Block} from '@subsquid/fuel-objects'
+import {DataHandlerContext, DataSourceBuilder} from '@subsquid/fuel-stream'
+import {Store, TypeormDatabase} from '@subsquid/typeorm-store'
+import {OrderbookAbi} from './OrderbookAbi'
 //import { Contract } from "./model";
-import { assertNotNull } from '@subsquid/util-internal'
-import { _abi } from './OrderbookAbi__factory'
-import { transcode } from 'buffer'
+import {assertNotNull} from '@subsquid/util-internal'
+import {_abi} from './OrderbookAbi__factory'
+import {transcode} from 'buffer'
 import crypto from 'crypto'
 
 import {
@@ -19,12 +19,12 @@ import {
     ReceiptType,
     TransactionResultReceipt,
 } from 'fuels'
-import { OrderbookAbi__factory } from './OrderbookAbi__factory'
-import { decode } from 'punycode'
-import { Order, OrderType, OpenOrderEvent, CancelOrderEvent, MatchOrderEvent, TradeOrderEvent } from './model'
+import {OrderbookAbi__factory} from './OrderbookAbi__factory'
+import {decode} from 'punycode'
+import {Order, OrderType, OpenOrderEvent, CancelOrderEvent, MatchOrderEvent, TradeOrderEvent} from './model'
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
-const ORDERBOOK_ID = '0x4a2ce054e3e94155f7092f7365b212f7f45105b74819c623744ebcc5d065c6ac'
+const ORDERBOOK_ID = '0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a'
 
 let abi = _abi as JsonAbi
 // First we create a DataSource - component,
@@ -55,6 +55,10 @@ const dataSource = new DataSourceBuilder()
             rb: true,
             digest: true,
         },
+        transaction: {
+            status: true,
+            hash: true,
+        },
     })
     .setBlockRange({
         from: 0,
@@ -63,7 +67,7 @@ const dataSource = new DataSourceBuilder()
     .addReceipt({
         type: ['LOG_DATA'],
         transaction: true,
-        contract: ['0x4a2ce054e3e94155f7092f7365b212f7f45105b74819c623744ebcc5d065c6ac'],
+        contract: ['0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a'],
     })
 
     .build()
@@ -83,7 +87,8 @@ run(dataSource, database, async (ctx) => {
     let matchOrderEvents: Map<string, MatchOrderEvent> = new Map()
     let openOrderEvents: Map<string, OpenOrderEvent> = new Map()
     let cancelOrderEvents: Map<string, CancelOrderEvent> = new Map()
-    const receipts: (ReceiptLogData & { data: string })[] = []
+    const receipts: (ReceiptLogData & {data: string})[] = []
+    let b = 0
     for (let block of blocks) {
         for (let receipt of block.receipts) {
             if (receipt.contract == ORDERBOOK_ID && receipt.transaction?.status.type != 'FailureStatus') {
@@ -101,28 +106,30 @@ run(dataSource, database, async (ctx) => {
                 })
             }
         }
+        for (let tx of block.transactions) {
+            // console.log('tx', tx)
+        }
     }
+
     let logs: any[] = getDecodedLogs(receipts, abi)
 
     // let createEvents: SpotMarketCreateEvent[] = [];
     for (let log of logs) {
-        if (log.tx_id === '0x9af2dde7333a23aae57d0d99cd4a2f84c78fbc8ac092aacd786ce11f8ab2719b') {
-            console.log('LOG', log)
-        }
-
         if (isEvent('TradeOrderEvent', log, abi)) {
-            const idSource = `${log.base_token.bits}-${log.order_matcher.bits}-${log.seller.bits}-${log.buyer.bits}-${log.trade_size
-                }-${log.trade_price}-${log.sell_order_id}-${log.buy_order_id}-${tai64ToDate(log.timestamp)}-${log.tx_id}`
+            console.log('LOG', log)
+            const idSource = `${log.base_sell_order_id}-${log.base_buy_order_id}-${log.order_matcher.Address.bits}-${
+                log.trade_size
+            }-${log.trade_price}-${log.tx_id}-${Math.random()}`
             const id = crypto.createHash('sha256').update(idSource).digest('hex')
 
             let sellOrder = orders.get(log.sell_order_id)
             if (!sellOrder) {
-                sellOrder = await ctx.store.get(Order, { where: { id: log.sell_order_id } })
+                sellOrder = await ctx.store.get(Order, {where: {id: log.sell_order_id}})
             }
 
             let buyOrder = orders.get(log.buy_order_id)
             if (!buyOrder) {
-                buyOrder = await ctx.store.get(Order, { where: { id: log.buy_order_id } })
+                buyOrder = await ctx.store.get(Order, {where: {id: log.buy_order_id}})
             }
 
             let event = new TradeOrderEvent({
@@ -130,10 +137,10 @@ run(dataSource, database, async (ctx) => {
                 baseSellOrderId: log.base_sell_order_id,
                 baseBuyOrderId: log.base_buy_order_id,
                 txId: log.tx_id,
-                orderMatcher: log.order_matcher.bits,
+                orderMatcher: log.order_matcher.Address.bits,
                 tradeSize: BigInt(log.trade_size),
                 tradePrice: BigInt(log.trade_price),
-                timestamp: tai64ToDate(log.timestamp).toString(),
+                timestamp: log.block_height,
             })
             tradeOrderEvents.set(event.id, event)
         }
@@ -165,8 +172,7 @@ function processOrder(log: any) {
         // baseSize: decodeI64(order.base_size),
         // basePrice: BigInt(order.base_price),
         timestamp: tai64ToDate(log.timestamp).toString(),
-        orderType:
-            order.base_size.value === 0n ? undefined : order.base_size.negative ? OrderType.Sell : OrderType.Buy,
+        orderType: order.base_size.value === 0n ? undefined : order.base_size.negative ? OrderType.Sell : OrderType.Buy,
     })
 }
 
@@ -229,7 +235,7 @@ function processOrderMatchEvent(log: any, order: Order) {
     return event
 }
 
-function decodeI64(i64: { readonly value: bigint; readonly negative: boolean }) {
+function decodeI64(i64: {readonly value: bigint; readonly negative: boolean}) {
     return (i64.negative ? '-' : '') + i64.value.toString()
 }
 
