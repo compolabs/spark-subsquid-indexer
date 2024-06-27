@@ -27,6 +27,19 @@ type OpenOrderEvent @entity {
   timestamp: String!
 }
 
+type MatchOrderEvent @entity {
+  id: ID!
+  orderId: String! @index
+  txId: String!
+  asset: String!
+  orderMatcher: String!
+  owner: String!
+  counterparty: String!
+  matchSize: BigInt!
+  matchPrice: BigInt!
+  timestamp: String!
+}
+
 type Order @entity {
   id: ID!
   asset: String! @index
@@ -44,19 +57,6 @@ type CancelOrderEvent @entity {
   id: ID!
   orderId: String! @index
   txId: String!
-  timestamp: String!
-}
-
-type MatchOrderEvent @entity {
-  id: ID!
-  orderId: String! @index
-  txId: String!
-  asset: String!
-  orderMatcher: String!
-  owner: String!
-  counterparty: String!
-  matchSize: BigInt!
-  matchPrice: BigInt!
   timestamp: String!
 }
 

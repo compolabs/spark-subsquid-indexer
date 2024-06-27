@@ -23,7 +23,7 @@ export class Order {
     assetType!: AssetType
 
     @Index_()
-    @Column_("varchar", {length: 4, nullable: false})
+    @Column_("varchar", {length: 6, nullable: false})
     orderType!: OrderType
 
     @Index_()

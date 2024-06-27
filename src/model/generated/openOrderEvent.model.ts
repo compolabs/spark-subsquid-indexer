@@ -27,7 +27,7 @@ export class OpenOrderEvent {
     @Column_("varchar", {length: 5, nullable: false})
     assetType!: AssetType
 
-    @Column_("varchar", {length: 4, nullable: false})
+    @Column_("varchar", {length: 6, nullable: false})
     orderType!: OrderType
 
     @BigIntColumn_({nullable: false})
