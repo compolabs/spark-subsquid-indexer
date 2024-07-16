@@ -96,3 +96,8 @@ type Balance @entity {
   asset: String! @index
   user: String! @index
 }
+
+type Subscription {
+  id: ID!
+  orderUpdated: Order
+}

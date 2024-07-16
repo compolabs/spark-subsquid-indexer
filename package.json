@@ -22,7 +22,8 @@
     "fuels": "^0.89.1",
     "pg": "^8.11.3",
     "tsdef": "^0.0.14",
-    "typeorm": "^0.3.17"
+    "typeorm": "^0.3.17",
+    "graphql-subscriptions": "^2.0.0"
   },
   "devDependencies": {
     "@subsquid/typeorm-codegen": "^2.0.1",

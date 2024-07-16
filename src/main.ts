@@ -1,11 +1,11 @@
-import {run} from '@subsquid/batch-processor'
-import {augmentBlock} from '@subsquid/fuel-objects'
-import {DataSourceBuilder} from '@subsquid/fuel-stream'
-import {Store, TypeormDatabase} from '@subsquid/typeorm-store'
-import {assertNotNull} from '@subsquid/util-internal'
+import { run } from '@subsquid/batch-processor'
+import { augmentBlock } from '@subsquid/fuel-objects'
+import { DataSourceBuilder } from '@subsquid/fuel-stream'
+import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
+import { assertNotNull } from '@subsquid/util-internal'
 import crypto from 'crypto'
-import {BN, getDecodedLogs, ReceiptLogData, ReceiptType} from 'fuels'
-import {OrderbookAbi__factory} from './abi'
+import { BN, getDecodedLogs, ReceiptLogData, ReceiptType } from 'fuels'
+import { OrderbookAbi__factory } from './abi'
 import {
     TradeOrderEventOutput,
     OpenOrderEventOutput,
@@ -32,6 +32,8 @@ import {
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
 import assert from 'assert'
+import resolversModule from './resolvers';
+const pubsub = resolversModule.pubsub;
 
 const ORDERBOOK_ID = '0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a'
 
@@ -68,7 +70,7 @@ const dataSource = new DataSourceBuilder()
         }
     })
     .setBlockRange({
-        from: 3328453,
+        from: 5200000,
     })
     .addReceipt({
         type: ['LOG_DATA'],
@@ -96,7 +98,7 @@ run(dataSource, database, async (ctx) => {
     let depositEvents: Map<string, DepositEvent> = new Map()
     let withdrawEvents: Map<string, WithdrawEvent> = new Map()
 
-    const receipts: (ReceiptLogData & {data: string, time: bigint, txId: string, receiptId: string})[] = []
+    const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = []
     for (let block of blocks) {
         for (let receipt of block.receipts) {
             let tx = assertNotNull(receipt.transaction)
@@ -155,6 +157,7 @@ run(dataSource, database, async (ctx) => {
                 timestamp: tai64ToDate(receipt.time).toISOString(),
             })
             orders.set(order.id, order)
+            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new TradeOrderEvent({
                 id: receipt.receiptId,
@@ -187,6 +190,7 @@ run(dataSource, database, async (ctx) => {
             order.amount = amount
             order.status = amount == 0n ? OrderStatus.Closed : OrderStatus.Active
             order.timestamp = tai64ToDate(receipt.time).toISOString()
+            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new CancelOrderEvent({
                 id: receipt.receiptId,
@@ -200,6 +204,7 @@ run(dataSource, database, async (ctx) => {
             order.amount = 0n
             order.status = OrderStatus.Canceled
             order.timestamp = tai64ToDate(receipt.time).toISOString()
+            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
             let event = new DepositEvent({
                 id: receipt.receiptId,
