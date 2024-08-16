@@ -34,7 +34,7 @@ import tai64ToDate from './utils/tai64ToDate'
 import assert from 'assert'
 import resolversModule from './resolvers';
 const pubsub = resolversModule.pubsub;
-const ORDERBOOK_ID = '0x08ca18ed550d6229f001641d43aac58e00f9eb7e25c9bea6d33716af61e43b2a'
+const ORDERBOOK_ID = '0x7278edd30be6b982d3196ffb2790321d8546814226e51e82c8136c8f6d3c0c97'
 
 // First we create a DataSource - component,
 // that defines where to get the data and what data should we get.

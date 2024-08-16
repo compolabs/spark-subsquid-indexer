@@ -12,5 +12,5 @@ export class Subscription {
 
     @Index_()
     @ManyToOne_(() => Order, {nullable: true})
-    orderUpdated!: Order
+    orderUpdated!: Order | undefined | null
 }
