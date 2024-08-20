@@ -5,8 +5,8 @@
   "scripts": {
     "build": "rm -rf lib && tsc"
   },
-  "resolutions": {
-    "graphql": "16.8.1"
+  "overrides": {
+    "graphql": "15.9.0"
   },
   "dependencies": {
     "@ethersproject/bignumber": "^5.7.0",
