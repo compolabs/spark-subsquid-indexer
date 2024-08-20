@@ -1,11 +1,11 @@
-import {run} from '@subsquid/batch-processor'
-import {augmentBlock} from '@subsquid/fuel-objects'
-import {DataSourceBuilder} from '@subsquid/fuel-stream'
-import {Store, TypeormDatabase} from '@subsquid/typeorm-store'
-import {assertNotNull} from '@subsquid/util-internal'
+import { run } from '@subsquid/batch-processor'
+import { augmentBlock } from '@subsquid/fuel-objects'
+import { DataSourceBuilder } from '@subsquid/fuel-stream'
+import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
+import { assertNotNull } from '@subsquid/util-internal'
 import crypto from 'crypto'
-import {BN, getDecodedLogs, ReceiptLogData, ReceiptType} from 'fuels'
-import {OrderbookAbi__factory} from './abi'
+import { BN, getDecodedLogs, ReceiptLogData, ReceiptType } from 'fuels'
+import { OrderbookAbi__factory } from './abi'
 import {
     TradeOrderEventOutput,
     OpenOrderEventOutput,
@@ -27,7 +27,7 @@ import {
     WithdrawEvent,
     OrderStatus,
     Balance,
-    AssetType
+    AssetType,
 } from './model'
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
@@ -89,6 +89,8 @@ run(dataSource, database, async (ctx) => {
     let blocks = ctx.blocks.map(augmentBlock)
 
     let orders: Map<string, Order> = new Map()
+    let activeBuyOrders: Map<string, Order> = new Map()
+    let activeSellOrders: Map<string, Order> = new Map()
     let balances: Map<string, Balance> = new Map()
     let tradeOrderEvents: Map<string, TradeOrderEvent> = new Map()
     let matchOrderEvents: Map<string, MatchOrderEvent> = new Map()
@@ -97,7 +99,7 @@ run(dataSource, database, async (ctx) => {
     let depositEvents: Map<string, DepositEvent> = new Map()
     let withdrawEvents: Map<string, WithdrawEvent> = new Map()
 
-    const receipts: (ReceiptLogData & {data: string, time: bigint, txId: string, receiptId: string})[] = []
+    const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = []
     for (let block of blocks) {
         for (let receipt of block.receipts) {
             let tx = assertNotNull(receipt.transaction)
@@ -129,6 +131,7 @@ run(dataSource, database, async (ctx) => {
         let receipt = receipts[idx]
 
         if (isEvent<OpenOrderEventOutput>('OpenOrderEvent', log, OrderbookAbi__factory.abi)) {
+            const orderType = log.order_type;
             let event = new OpenOrderEvent({
                 id: receipt.receiptId,
                 orderId: log.order_id,
@@ -144,18 +147,25 @@ run(dataSource, database, async (ctx) => {
             openOrderEvents.set(event.id, event)
 
             let order = new Order({
+                ...event,
                 id: log.order_id,
                 initialAmount: BigInt(log.amount.toString()),
                 status: OrderStatus.Active,
-                amount: BigInt(log.amount.toString()),
-                asset: log.asset.bits,
-                assetType: log.asset_type as unknown as AssetType,
-                orderType: log.order_type as unknown as OrderType,
-                price: BigInt(log.price.toString()),
-                user: getIdentity(log.user),
-                timestamp: tai64ToDate(receipt.time).toISOString(),
+                // amount: BigInt(log.amount.toString()),
+                // asset: log.asset.bits,
+                // assetType: log.asset_type as unknown as AssetType,
+                // orderType: log.order_type as unknown as OrderType,
+                // price: BigInt(log.price.toString()),
+                // user: getIdentity(log.user),
+                // timestamp: tai64ToDate(receipt.time).toISOString(),
             })
             orders.set(order.id, order)
+
+            if (orderType === "Buy") {
+                activeBuyOrders.set(order.id, order);
+            } else if (orderType === "Sell") {
+                activeSellOrders.set(order.id, order);
+            }
             pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new TradeOrderEvent({
@@ -185,10 +195,22 @@ run(dataSource, database, async (ctx) => {
             matchOrderEvents.set(event.id, event)
 
             let order = assertNotNull(await lookupOrder(ctx.store, orders, log.order_id))
+            let activeBuyOrder = assertNotNull(await lookupOrder(ctx.store, activeBuyOrders, log.order_id))
+            let activeSellOrder = assertNotNull(await lookupOrder(ctx.store, activeSellOrders, log.order_id))
             let amount = order.amount - event.matchSize
+
             order.amount = amount
             order.status = amount == 0n ? OrderStatus.Closed : OrderStatus.Active
             order.timestamp = tai64ToDate(receipt.time).toISOString()
+
+            activeBuyOrder.amount = amount
+            activeBuyOrder.status = amount == 0n ? OrderStatus.Closed : OrderStatus.Active
+            activeBuyOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+
+            activeSellOrder.amount = amount
+            activeSellOrder.status = amount == 0n ? OrderStatus.Closed : OrderStatus.Active
+            activeSellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+
             pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new CancelOrderEvent({
@@ -200,9 +222,21 @@ run(dataSource, database, async (ctx) => {
             cancelOrderEvents.set(event.id, event)
 
             let order = assertNotNull(await lookupOrder(ctx.store, orders, log.order_id))
+            let activeBuyOrder = assertNotNull(await lookupOrder(ctx.store, activeBuyOrders, log.order_id))
+            let activeSellOrder = assertNotNull(await lookupOrder(ctx.store, activeSellOrders, log.order_id))
+
             order.amount = 0n
             order.status = OrderStatus.Canceled
             order.timestamp = tai64ToDate(receipt.time).toISOString()
+
+            activeBuyOrder.amount = 0n
+            activeBuyOrder.status = OrderStatus.Canceled
+            activeBuyOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+
+            activeSellOrder.amount = 0n
+            activeSellOrder.status = OrderStatus.Canceled
+            activeSellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+
             pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
             let event = new DepositEvent({
@@ -266,7 +300,6 @@ async function lookupOrder(store: Store, orders: Map<string, Order>, id: string)
     }
     return order
 }
-
 
 async function lookupBalance(store: Store, balances: Map<string, Balance>, id: string) {
     let balance = balances.get(id)

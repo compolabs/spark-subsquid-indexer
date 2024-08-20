@@ -35,8 +35,34 @@ type Order @entity {
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
-  status: OrderStatus! @index # order status
-  initialAmount: BigInt! # initial order amount
+  status: OrderStatus! @index
+  initialAmount: BigInt!
+  timestamp: String!
+}
+
+type ActiveSellOrder @entity {
+  id: ID!
+  asset: String! @index
+  amount: BigInt!
+  assetType: AssetType!
+  orderType: OrderType! @index
+  price: BigInt! @index
+  user: String! @index
+  status: OrderStatus!
+  initialAmount: BigInt!
+  timestamp: String!
+}
+
+type ActiveBuyOrder @entity {
+  id: ID!
+  asset: String! @index
+  amount: BigInt!
+  assetType: AssetType!
+  orderType: OrderType! @index
+  price: BigInt! @index
+  user: String! @index
+  status: OrderStatus!
+  initialAmount: BigInt!
   timestamp: String!
 }
 

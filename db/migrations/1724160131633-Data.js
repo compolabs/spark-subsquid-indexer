@@ -1,5 +1,5 @@
-module.exports = class Data1724150585430 {
-    name = 'Data1724150585430'
+module.exports = class Data1724160131633 {
+    name = 'Data1724160131633'
 
     async up(db) {
         await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
@@ -10,6 +10,16 @@ module.exports = class Data1724150585430 {
         await db.query(`CREATE INDEX "IDX_8785a97e76bf66a38dbd342225" ON "order" ("price") `)
         await db.query(`CREATE INDEX "IDX_6807ee8d7ff4c3349f781c2b28" ON "order" ("user") `)
         await db.query(`CREATE INDEX "IDX_7a9573d6a1fb982772a9123320" ON "order" ("status") `)
+        await db.query(`CREATE TABLE "active_sell_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_a3c07595132614403631e78ddb5" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_3ab5528876870f85fa30c14efa" ON "active_sell_order" ("asset") `)
+        await db.query(`CREATE INDEX "IDX_127e119d8a7f8c17c05d2af3a8" ON "active_sell_order" ("order_type") `)
+        await db.query(`CREATE INDEX "IDX_3d18f913e5d7ae7b73be8b3b17" ON "active_sell_order" ("price") `)
+        await db.query(`CREATE INDEX "IDX_2adbfd57bf5963026940465018" ON "active_sell_order" ("user") `)
+        await db.query(`CREATE TABLE "active_buy_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c384b9d7ba5ca28aa8b398c9f89" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE INDEX "IDX_b6e65df3b12e63df050beeb419" ON "active_buy_order" ("asset") `)
+        await db.query(`CREATE INDEX "IDX_bb944e4e6c9725c942121dba96" ON "active_buy_order" ("order_type") `)
+        await db.query(`CREATE INDEX "IDX_39a3776b222d04657a722652f4" ON "active_buy_order" ("price") `)
+        await db.query(`CREATE INDEX "IDX_56ff48bcbd16daa5141b045df1" ON "active_buy_order" ("user") `)
         await db.query(`CREATE TABLE "cancel_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_64af7a03ce1fa8301ad354eea0a" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_3ad485c27b06f4c7a3bebe564d" ON "cancel_order_event" ("order_id") `)
         await db.query(`CREATE TABLE "match_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "order_matcher" text NOT NULL, "owner" text NOT NULL, "counterparty" text NOT NULL, "match_size" numeric NOT NULL, "match_price" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_9566a3b4442aee11d443cf76307" PRIMARY KEY ("id"))`)
@@ -46,6 +56,16 @@ module.exports = class Data1724150585430 {
         await db.query(`DROP INDEX "public"."IDX_8785a97e76bf66a38dbd342225"`)
         await db.query(`DROP INDEX "public"."IDX_6807ee8d7ff4c3349f781c2b28"`)
         await db.query(`DROP INDEX "public"."IDX_7a9573d6a1fb982772a9123320"`)
+        await db.query(`DROP TABLE "active_sell_order"`)
+        await db.query(`DROP INDEX "public"."IDX_3ab5528876870f85fa30c14efa"`)
+        await db.query(`DROP INDEX "public"."IDX_127e119d8a7f8c17c05d2af3a8"`)
+        await db.query(`DROP INDEX "public"."IDX_3d18f913e5d7ae7b73be8b3b17"`)
+        await db.query(`DROP INDEX "public"."IDX_2adbfd57bf5963026940465018"`)
+        await db.query(`DROP TABLE "active_buy_order"`)
+        await db.query(`DROP INDEX "public"."IDX_b6e65df3b12e63df050beeb419"`)
+        await db.query(`DROP INDEX "public"."IDX_bb944e4e6c9725c942121dba96"`)
+        await db.query(`DROP INDEX "public"."IDX_39a3776b222d04657a722652f4"`)
+        await db.query(`DROP INDEX "public"."IDX_56ff48bcbd16daa5141b045df1"`)
         await db.query(`DROP TABLE "cancel_order_event"`)
         await db.query(`DROP INDEX "public"."IDX_3ad485c27b06f4c7a3bebe564d"`)
         await db.query(`DROP TABLE "match_order_event"`)
