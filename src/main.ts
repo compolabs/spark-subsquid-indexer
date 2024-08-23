@@ -36,7 +36,7 @@ import tai64ToDate from './utils/tai64ToDate'
 import assert from 'assert'
 import resolversModule from './resolvers';
 const pubsub = resolversModule.pubsub;
-const ORDERBOOK_ID = '0x7278edd30be6b982d3196ffb2790321d8546814226e51e82c8136c8f6d3c0c97'
+const ORDERBOOK_ID = '0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa'
 
 // First we create a DataSource - component,
 // that defines where to get the data and what data should we get.
@@ -134,7 +134,7 @@ run(dataSource, database, async (ctx) => {
 
         if (isEvent<OpenOrderEventOutput>('OpenOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new OpenOrderEvent({
-                id: receipt.receiptId,
+                id: receipt.txId,
                 orderId: log.order_id,
                 txId: receipt.txId,
                 asset: log.asset.bits,
