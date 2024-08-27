@@ -42,6 +42,8 @@ export type OrderErrorInput = Enum<{ OrderNotFound: string, PriceTooSmall: [BigN
 export type OrderErrorOutput = Enum<{ OrderNotFound: string, PriceTooSmall: [BN, BN], ZeroOrderAmount: [], ZeroLockAmount: [], FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
+export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
+export enum ReentrancyErrorOutput { NonReentrant = 'NonReentrant' };
 export type ValueErrorInput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BigNumberish, BigNumberish] }>;
 export type ValueErrorOutput = Enum<{ InvalidAmount: [], InvalidSlippage: [], InvalidArrayLength: [], InvalidFeeAmount: [BN, BN] }>;
 
@@ -61,8 +63,8 @@ export type DepositEventInput = { amount: BigNumberish, asset: AssetIdInput, use
 export type DepositEventOutput = { amount: BN, asset: AssetIdOutput, user: IdentityOutput };
 export type MatchOrderEventInput = { order_id: string, asset: AssetIdInput, order_matcher: IdentityInput, owner: IdentityInput, counterparty: IdentityInput, match_size: BigNumberish, match_price: BigNumberish };
 export type MatchOrderEventOutput = { order_id: string, asset: AssetIdOutput, order_matcher: IdentityOutput, owner: IdentityOutput, counterparty: IdentityOutput, match_size: BN, match_price: BN };
-export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, asset_type: AssetTypeInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput };
-export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput };
+export type OpenOrderEventInput = { amount: BigNumberish, asset: AssetIdInput, order_type: OrderTypeInput, order_id: string, price: BigNumberish, user: IdentityInput };
+export type OpenOrderEventOutput = { amount: BN, asset: AssetIdOutput, order_type: OrderTypeOutput, order_id: string, price: BN, user: IdentityOutput };
 export type OrderInput = { amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, matcher_fee: BigNumberish, protocol_fee: BigNumberish };
 export type OrderOutput = { amount: BN, asset_type: AssetTypeOutput, order_type: OrderTypeOutput, owner: IdentityOutput, price: BN, block_height: number, matcher_fee: number, protocol_fee: BN };
 export type OrderChangeInfoInput = { change_type: OrderChangeTypeInput, block_height: BigNumberish, sender: IdentityInput, tx_id: string, amount_before: BigNumberish, amount_after: BigNumberish };
@@ -88,6 +90,7 @@ export type OrderbookAbiConfigurables = {
   FUEL_ASSET: AssetIdInput;
   ETH_BASE_PRICE: BigNumberish;
   ETH_QUOTE_PRICE: BigNumberish;
+  VERSION: BigNumberish;
 };
 
 interface OrderbookAbiInterface extends Interface {
@@ -116,10 +119,10 @@ interface OrderbookAbiInterface extends Interface {
 
   encodeFunctionData(functionFragment: 'cancel_order', values: [string]): Uint8Array;
   encodeFunctionData(functionFragment: 'deposit', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'fulfill_order_many', values: [BigNumberish, AssetTypeInput, OrderTypeInput, LimitTypeInput, BigNumberish, BigNumberish, Vec<string>]): Uint8Array;
+  encodeFunctionData(functionFragment: 'fulfill_order_many', values: [BigNumberish, OrderTypeInput, LimitTypeInput, BigNumberish, BigNumberish, Vec<string>]): Uint8Array;
   encodeFunctionData(functionFragment: 'match_order_many', values: [Vec<string>]): Uint8Array;
   encodeFunctionData(functionFragment: 'match_order_pair', values: [string, string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'open_order', values: [BigNumberish, AssetTypeInput, OrderTypeInput, BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'open_order', values: [BigNumberish, OrderTypeInput, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'set_matcher_fee', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'set_protocol_fee', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'withdraw', values: [BigNumberish, AssetTypeInput]): Uint8Array;
@@ -129,9 +132,9 @@ interface OrderbookAbiInterface extends Interface {
   encodeFunctionData(functionFragment: 'matcher_fee', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'order', values: [string]): Uint8Array;
   encodeFunctionData(functionFragment: 'order_change_info', values: [string]): Uint8Array;
-  encodeFunctionData(functionFragment: 'order_id', values: [AssetTypeInput, OrderTypeInput, IdentityInput, BigNumberish, BigNumberish]): Uint8Array;
+  encodeFunctionData(functionFragment: 'order_id', values: [OrderTypeInput, IdentityInput, BigNumberish, BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'protocol_fee', values: []): Uint8Array;
-  encodeFunctionData(functionFragment: 'protocol_fee_amount', values: [BigNumberish, AssetTypeInput]): Uint8Array;
+  encodeFunctionData(functionFragment: 'protocol_fee_amount', values: [BigNumberish]): Uint8Array;
   encodeFunctionData(functionFragment: 'total_protocol_fee', values: []): Uint8Array;
   encodeFunctionData(functionFragment: 'user_orders', values: [IdentityInput]): Uint8Array;
 
@@ -162,22 +165,22 @@ export class OrderbookAbi extends Contract {
   functions: {
     cancel_order: InvokeFunction<[order_id: string], void>;
     deposit: InvokeFunction<[], void>;
-    fulfill_order_many: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, limit_type: LimitTypeInput, price: BigNumberish, slippage: BigNumberish, orders: Vec<string>], string>;
+    fulfill_order_many: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, limit_type: LimitTypeInput, price: BigNumberish, slippage: BigNumberish, orders: Vec<string>], string>;
     match_order_many: InvokeFunction<[orders: Vec<string>], void>;
     match_order_pair: InvokeFunction<[order0_id: string, order1_id: string], void>;
-    open_order: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput, order_type: OrderTypeInput, price: BigNumberish], string>;
+    open_order: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_matcher_fee: InvokeFunction<[amount: BigNumberish], void>;
     set_protocol_fee: InvokeFunction<[amount: BigNumberish], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
     withdraw_protocol_fee: InvokeFunction<[to: IdentityInput], void>;
     account: InvokeFunction<[user: IdentityInput], Option<AccountOutput>>;
-    config: InvokeFunction<[], [AddressOutput, AssetIdOutput, number, AssetIdOutput, number, number, AssetIdOutput]>;
+    config: InvokeFunction<[], [AddressOutput, AssetIdOutput, number, AssetIdOutput, number, number, AssetIdOutput, number]>;
     matcher_fee: InvokeFunction<[], number>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
     order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
-    order_id: InvokeFunction<[asset_type: AssetTypeInput, order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish], string>;
+    order_id: InvokeFunction<[order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish], string>;
     protocol_fee: InvokeFunction<[], number>;
-    protocol_fee_amount: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], BN>;
+    protocol_fee_amount: InvokeFunction<[amount: BigNumberish], BN>;
     total_protocol_fee: InvokeFunction<[], BN>;
     user_orders: InvokeFunction<[user: IdentityInput], Vec<string>>;
   };

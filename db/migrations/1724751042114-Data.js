@@ -1,21 +1,21 @@
-module.exports = class Data1724413076583 {
-    name = 'Data1724413076583'
+module.exports = class Data1724751042114 {
+    name = 'Data1724751042114'
 
     async up(db) {
-        await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_5eeb68ab2e76f093921a971e6f" ON "open_order_event" ("order_id") `)
-        await db.query(`CREATE TABLE "order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_1031171c13130102495201e3e20" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_1031171c13130102495201e3e20" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_2239145da1719f2e10682949fe" ON "order" ("asset") `)
         await db.query(`CREATE INDEX "IDX_0928ad70dd7bc84b54e7ea85bd" ON "order" ("order_type") `)
         await db.query(`CREATE INDEX "IDX_8785a97e76bf66a38dbd342225" ON "order" ("price") `)
         await db.query(`CREATE INDEX "IDX_6807ee8d7ff4c3349f781c2b28" ON "order" ("user") `)
         await db.query(`CREATE INDEX "IDX_7a9573d6a1fb982772a9123320" ON "order" ("status") `)
-        await db.query(`CREATE TABLE "active_sell_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_a3c07595132614403631e78ddb5" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "active_sell_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_a3c07595132614403631e78ddb5" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_3ab5528876870f85fa30c14efa" ON "active_sell_order" ("asset") `)
         await db.query(`CREATE INDEX "IDX_127e119d8a7f8c17c05d2af3a8" ON "active_sell_order" ("order_type") `)
         await db.query(`CREATE INDEX "IDX_3d18f913e5d7ae7b73be8b3b17" ON "active_sell_order" ("price") `)
         await db.query(`CREATE INDEX "IDX_2adbfd57bf5963026940465018" ON "active_sell_order" ("user") `)
-        await db.query(`CREATE TABLE "active_buy_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "asset_type" character varying(5) NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c384b9d7ba5ca28aa8b398c9f89" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "active_buy_order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c384b9d7ba5ca28aa8b398c9f89" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_b6e65df3b12e63df050beeb419" ON "active_buy_order" ("asset") `)
         await db.query(`CREATE INDEX "IDX_bb944e4e6c9725c942121dba96" ON "active_buy_order" ("order_type") `)
         await db.query(`CREATE INDEX "IDX_39a3776b222d04657a722652f4" ON "active_buy_order" ("price") `)
@@ -42,9 +42,6 @@ module.exports = class Data1724413076583 {
         await db.query(`CREATE TABLE "balance" ("id" character varying NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, CONSTRAINT "PK_079dddd31a81672e8143a649ca0" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_a0025894b0915d8a63f97173ce" ON "balance" ("asset") `)
         await db.query(`CREATE INDEX "IDX_a7473c61c7a2127dee44379985" ON "balance" ("user") `)
-        await db.query(`CREATE TABLE "subscription" ("id" character varying NOT NULL, "order_updated_id" character varying, CONSTRAINT "PK_8c3e00ebd02103caa1174cd5d9d" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_ed9ca23038ed4c332c83bcf5f4" ON "subscription" ("order_updated_id") `)
-        await db.query(`ALTER TABLE "subscription" ADD CONSTRAINT "FK_ed9ca23038ed4c332c83bcf5f4f" FOREIGN KEY ("order_updated_id") REFERENCES "order"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`)
     }
 
     async down(db) {
@@ -88,8 +85,5 @@ module.exports = class Data1724413076583 {
         await db.query(`DROP TABLE "balance"`)
         await db.query(`DROP INDEX "public"."IDX_a0025894b0915d8a63f97173ce"`)
         await db.query(`DROP INDEX "public"."IDX_a7473c61c7a2127dee44379985"`)
-        await db.query(`DROP TABLE "subscription"`)
-        await db.query(`DROP INDEX "public"."IDX_ed9ca23038ed4c332c83bcf5f4"`)
-        await db.query(`ALTER TABLE "subscription" DROP CONSTRAINT "FK_ed9ca23038ed4c332c83bcf5f4f"`)
     }
 }

@@ -27,15 +27,12 @@ import {
     WithdrawEvent,
     OrderStatus,
     Balance,
-    AssetType,
     ActiveBuyOrder,
     ActiveSellOrder,
 } from './model'
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
 import assert from 'assert'
-import resolversModule from './resolvers';
-const pubsub = resolversModule.pubsub;
 const ORDERBOOK_ID = '0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa'
 
 // First we create a DataSource - component,
@@ -134,12 +131,11 @@ run(dataSource, database, async (ctx) => {
 
         if (isEvent<OpenOrderEventOutput>('OpenOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new OpenOrderEvent({
-                id: receipt.txId,
+                id: receipt.receiptId,
                 orderId: log.order_id,
                 txId: receipt.txId,
                 asset: log.asset.bits,
                 amount: BigInt(log.amount.toString()),
-                assetType: log.asset_type as unknown as AssetType,
                 orderType: log.order_type as unknown as OrderType,
                 price: BigInt(log.price.toString()),
                 user: getIdentity(log.user),
@@ -154,7 +150,6 @@ run(dataSource, database, async (ctx) => {
                 status: OrderStatus.Active,
                 amount: BigInt(log.amount.toString()),
                 asset: log.asset.bits,
-                assetType: log.asset_type as unknown as AssetType,
                 orderType: log.order_type as unknown as OrderType,
                 price: BigInt(log.price.toString()),
                 user: getIdentity(log.user),
@@ -171,7 +166,6 @@ run(dataSource, database, async (ctx) => {
                 activeSellOrders.set(order.id, sellOrder)
             }
 
-            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new TradeOrderEvent({
                 id: receipt.receiptId,
@@ -189,7 +183,7 @@ run(dataSource, database, async (ctx) => {
                 id: receipt.receiptId,
                 orderId: log.order_id,
                 txId: receipt.txId,
-                asset: log.asset as unknown as AssetType,
+                asset: log.asset.bits,
                 orderMatcher: getIdentity(log.order_matcher),
                 owner: getIdentity(log.owner),
                 counterparty: getIdentity(log.counterparty),
@@ -226,7 +220,6 @@ run(dataSource, database, async (ctx) => {
                 }
             }
 
-            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new CancelOrderEvent({
                 id: receipt.receiptId,
@@ -249,13 +242,12 @@ run(dataSource, database, async (ctx) => {
                 activeSellOrders.delete(order.id)
             }
 
-            pubsub.publish('ORDER_UPDATED', { orderUpdated: order })
         } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
             let event = new DepositEvent({
                 id: receipt.receiptId,
                 txId: receipt.txId,
                 amount: BigInt(log.amount.toString()),
-                asset: log.asset as unknown as AssetType,
+                asset: log.asset.bits,
                 user: getIdentity(log.user),
                 timestamp: tai64ToDate(receipt.time).toISOString(),
             })
@@ -269,7 +261,7 @@ run(dataSource, database, async (ctx) => {
                 balance = new Balance({
                     id,
                     amount: BigInt(log.amount.toString()),
-                    asset: log.asset as unknown as AssetType,
+                    asset: log.asset.bits,
                     user: getIdentity(log.user),
                 })
                 balances.set(balance.id, balance)
@@ -279,7 +271,7 @@ run(dataSource, database, async (ctx) => {
                 id: receipt.receiptId,
                 txId: receipt.txId,
                 amount: BigInt(log.amount.toString()),
-                asset: log.asset as unknown as AssetType,
+                asset: log.asset.bits,
                 user: getIdentity(log.user),
                 timestamp: tai64ToDate(receipt.time).toISOString()
             })

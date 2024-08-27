@@ -9,18 +9,12 @@ enum OrderStatus {
   Canceled
 }
 
-enum AssetType {
-  Base
-  Quote
-}
-
 type OpenOrderEvent @entity {
   id: ID!
   orderId: String! @index
   txId: String!
   asset: String!
   amount: BigInt!
-  assetType: AssetType!
   orderType: OrderType!
   price: BigInt!
   user: String!
@@ -31,7 +25,6 @@ type Order @entity {
   id: ID!
   asset: String! @index
   amount: BigInt!
-  assetType: AssetType!
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
@@ -44,7 +37,6 @@ type ActiveSellOrder @entity {
   id: ID!
   asset: String! @index
   amount: BigInt!
-  assetType: AssetType!
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
@@ -57,7 +49,6 @@ type ActiveBuyOrder @entity {
   id: ID!
   asset: String! @index
   amount: BigInt!
-  assetType: AssetType!
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
@@ -94,7 +85,6 @@ type TradeOrderEvent @entity {
   orderMatcher: String! @index
   tradeSize: BigInt! @index
   tradePrice: BigInt! @index
-  # block_height: BigInt! @index
   timestamp: String!
 }
 
@@ -121,9 +111,4 @@ type Balance @entity {
   amount: BigInt!
   asset: String! @index
   user: String! @index
-}
-
-type Subscription @entity {
-  id: ID!
-  orderUpdated: Order @index
 }

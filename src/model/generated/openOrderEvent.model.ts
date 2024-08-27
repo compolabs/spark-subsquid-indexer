@@ -1,5 +1,4 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
-import {AssetType} from "./_assetType"
 import {OrderType} from "./_orderType"
 
 @Entity_()
@@ -23,9 +22,6 @@ export class OpenOrderEvent {
 
     @BigIntColumn_({nullable: false})
     amount!: bigint
-
-    @Column_("varchar", {length: 5, nullable: false})
-    assetType!: AssetType
 
     @Column_("varchar", {length: 4, nullable: false})
     orderType!: OrderType
