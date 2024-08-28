@@ -3,7 +3,6 @@ import { augmentBlock } from '@subsquid/fuel-objects'
 import { DataSourceBuilder } from '@subsquid/fuel-stream'
 import { Store, TypeormDatabase } from '@subsquid/typeorm-store'
 import { assertNotNull } from '@subsquid/util-internal'
-import crypto from 'crypto'
 import { BN, getDecodedLogs, ReceiptLogData, ReceiptType } from 'fuels'
 import { OrderbookAbi__factory } from './abi'
 import {
@@ -11,10 +10,7 @@ import {
     OpenOrderEventOutput,
     MatchOrderEventOutput,
     CancelOrderEventOutput,
-    DepositEventOutput,
-    WithdrawEventOutput,
     IdentityOutput,
-    AssetIdOutput
 } from './abi/OrderbookAbi'
 import {
     Order,
@@ -23,10 +19,7 @@ import {
     CancelOrderEvent,
     MatchOrderEvent,
     TradeOrderEvent,
-    DepositEvent,
-    WithdrawEvent,
     OrderStatus,
-    Balance,
     ActiveBuyOrder,
     ActiveSellOrder,
 } from './model'
@@ -90,13 +83,10 @@ run(dataSource, database, async (ctx) => {
     let orders: Map<string, Order> = new Map()
     let activeBuyOrders: Map<string, ActiveBuyOrder> = new Map()
     let activeSellOrders: Map<string, ActiveSellOrder> = new Map()
-    let balances: Map<string, Balance> = new Map()
     let tradeOrderEvents: Map<string, TradeOrderEvent> = new Map()
     let matchOrderEvents: Map<string, MatchOrderEvent> = new Map()
     let openOrderEvents: Map<string, OpenOrderEvent> = new Map()
     let cancelOrderEvents: Map<string, CancelOrderEvent> = new Map()
-    let depositEvents: Map<string, DepositEvent> = new Map()
-    let withdrawEvents: Map<string, WithdrawEvent> = new Map()
 
     const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = []
     for (let block of blocks) {
@@ -242,57 +232,16 @@ run(dataSource, database, async (ctx) => {
                 activeSellOrders.delete(order.id)
             }
 
-        } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
-            let event = new DepositEvent({
-                id: receipt.receiptId,
-                txId: receipt.txId,
-                amount: BigInt(log.amount.toString()),
-                asset: log.asset.bits,
-                user: getIdentity(log.user),
-                timestamp: tai64ToDate(receipt.time).toISOString(),
-            })
-            depositEvents.set(event.id, event)
-
-            let id = generateBalanceId(log.asset, log.user)
-            let balance = await lookupBalance(ctx.store, balances, id)
-            if (balance) {
-                balance.amount += BigInt(log.amount.toString())
-            } else {
-                balance = new Balance({
-                    id,
-                    amount: BigInt(log.amount.toString()),
-                    asset: log.asset.bits,
-                    user: getIdentity(log.user),
-                })
-                balances.set(balance.id, balance)
-            }
-        } else if (isEvent<WithdrawEventOutput>('WithdrawEvent', log, OrderbookAbi__factory.abi)) {
-            let event = new WithdrawEvent({
-                id: receipt.receiptId,
-                txId: receipt.txId,
-                amount: BigInt(log.amount.toString()),
-                asset: log.asset.bits,
-                user: getIdentity(log.user),
-                timestamp: tai64ToDate(receipt.time).toISOString()
-            })
-            withdrawEvents.set(event.id, event)
-
-            let id = generateBalanceId(log.asset, log.user)
-            let balance = assertNotNull(await lookupBalance(ctx.store, balances, id))
-            balance.amount -= BigInt(log.amount.toString())
         }
     }
 
     await ctx.store.upsert([...orders.values()])
     await ctx.store.upsert([...activeBuyOrders.values()])
     await ctx.store.upsert([...activeSellOrders.values()])
-    await ctx.store.upsert([...balances.values()])
     await ctx.store.save([...tradeOrderEvents.values()])
     await ctx.store.save([...openOrderEvents.values()])
     await ctx.store.save([...matchOrderEvents.values()])
     await ctx.store.save([...cancelOrderEvents.values()])
-    await ctx.store.save([...depositEvents.values()])
-    await ctx.store.save([...withdrawEvents.values()])
 })
 
 
@@ -332,24 +281,6 @@ async function lookupSellOrder(store: Store, orders: Map<string, ActiveBuyOrder>
 }
 
 
-async function lookupBalance(store: Store, balances: Map<string, Balance>, id: string) {
-    let balance = balances.get(id)
-    if (!balance) {
-        balance = await store.get(Balance, id)
-        if (balance) {
-            balances.set(id, balance)
-        }
-    }
-    return balance
-}
-
-
 function getIdentity(output: IdentityOutput): string {
     return assertNotNull(output.Address?.bits || output.ContractId?.bits)
-}
-
-
-function generateBalanceId(asset: AssetIdOutput, identity: IdentityOutput): string {
-    let idSource = `${asset.bits}-${getIdentity(identity)}`
-    return crypto.createHash('sha256').update(idSource).digest('hex')
 }

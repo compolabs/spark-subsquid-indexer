@@ -87,28 +87,3 @@ type TradeOrderEvent @entity {
   tradePrice: BigInt! @index
   timestamp: String!
 }
-
-type DepositEvent @entity {
-  id: ID!
-  txId: String! @index
-  amount: BigInt!
-  asset: String! @index
-  user: String! @index
-  timestamp: String!
-}
-
-type WithdrawEvent @entity {
-  id: ID!
-  txId: String! @index
-  amount: BigInt!
-  asset: String! @index
-  user: String! @index
-  timestamp: String!
-}
-
-type Balance @entity {
-  id: ID!
-  amount: BigInt!
-  asset: String! @index
-  user: String! @index
-}

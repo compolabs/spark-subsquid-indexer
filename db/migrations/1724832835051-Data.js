@@ -1,5 +1,5 @@
-module.exports = class Data1724751042114 {
-    name = 'Data1724751042114'
+module.exports = class Data1724832835051 {
+    name = 'Data1724832835051'
 
     async up(db) {
         await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
@@ -31,17 +31,6 @@ module.exports = class Data1724751042114 {
         await db.query(`CREATE INDEX "IDX_3f089c1661c2ffcd02316f5234" ON "trade_order_event" ("order_matcher") `)
         await db.query(`CREATE INDEX "IDX_fecc6646e0cf27348538bc72d0" ON "trade_order_event" ("trade_size") `)
         await db.query(`CREATE INDEX "IDX_d95773904f1f40ae100303bc83" ON "trade_order_event" ("trade_price") `)
-        await db.query(`CREATE TABLE "deposit_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_15cf72ceca9f2fd85c11de40a76" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_f86f01bb7884db7a43775fd071" ON "deposit_event" ("tx_id") `)
-        await db.query(`CREATE INDEX "IDX_49c81b8dd5b849fbfea27ad189" ON "deposit_event" ("asset") `)
-        await db.query(`CREATE INDEX "IDX_23b9da36e3ee7233bd42781d4f" ON "deposit_event" ("user") `)
-        await db.query(`CREATE TABLE "withdraw_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c5814f5ca4403b899aac8c6a2bd" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_b2e6d4af9489f1f8e804b4707c" ON "withdraw_event" ("tx_id") `)
-        await db.query(`CREATE INDEX "IDX_0fb7f33aa9ef11a288aa54e587" ON "withdraw_event" ("asset") `)
-        await db.query(`CREATE INDEX "IDX_1a115c34caacd76cceaafa3fbe" ON "withdraw_event" ("user") `)
-        await db.query(`CREATE TABLE "balance" ("id" character varying NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, CONSTRAINT "PK_079dddd31a81672e8143a649ca0" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_a0025894b0915d8a63f97173ce" ON "balance" ("asset") `)
-        await db.query(`CREATE INDEX "IDX_a7473c61c7a2127dee44379985" ON "balance" ("user") `)
     }
 
     async down(db) {
@@ -74,16 +63,5 @@ module.exports = class Data1724751042114 {
         await db.query(`DROP INDEX "public"."IDX_3f089c1661c2ffcd02316f5234"`)
         await db.query(`DROP INDEX "public"."IDX_fecc6646e0cf27348538bc72d0"`)
         await db.query(`DROP INDEX "public"."IDX_d95773904f1f40ae100303bc83"`)
-        await db.query(`DROP TABLE "deposit_event"`)
-        await db.query(`DROP INDEX "public"."IDX_f86f01bb7884db7a43775fd071"`)
-        await db.query(`DROP INDEX "public"."IDX_49c81b8dd5b849fbfea27ad189"`)
-        await db.query(`DROP INDEX "public"."IDX_23b9da36e3ee7233bd42781d4f"`)
-        await db.query(`DROP TABLE "withdraw_event"`)
-        await db.query(`DROP INDEX "public"."IDX_b2e6d4af9489f1f8e804b4707c"`)
-        await db.query(`DROP INDEX "public"."IDX_0fb7f33aa9ef11a288aa54e587"`)
-        await db.query(`DROP INDEX "public"."IDX_1a115c34caacd76cceaafa3fbe"`)
-        await db.query(`DROP TABLE "balance"`)
-        await db.query(`DROP INDEX "public"."IDX_a0025894b0915d8a63f97173ce"`)
-        await db.query(`DROP INDEX "public"."IDX_a7473c61c7a2127dee44379985"`)
     }
 }
