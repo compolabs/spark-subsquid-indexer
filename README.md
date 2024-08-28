@@ -1,38 +1,69 @@
-# fuel-example
+## Spark OrderBook indexer
 
-This project shows how one can index Fuel network using Subsquid SDK.
+Contract: https://github.com/compolabs/orderbook-contract/tree/master/market-contract
 
-## Getting started
+_Please refer to the [documentation website](https://docs.sqd.dev/) for a thorough guide on all Squid indexer features_
 
-### Prerequisites
+## Local usage
 
-- Node.js (version 20.x and above)
-- Docker
+1. Clone the repository
 
-### Run indexer
+   ```sh
+   git clone git@github.com:compolabs/spark-subsquid-indexer.git
+   ```
 
-```bash
-# Install dependencies
-npm ci
+2. Open it locally
 
-# Compile the project
-sqd build
+   ```sh
+   cd spark-subsquid-indexer
+   ```
 
-# Launch Postgres database to store the data
-sqd up
+3. First, install the latest version of Subsquid CLI as a global npm package
 
-# Apply database migrations to create the target schema
-sqd migration:generate
+   ```sh
+   npm i -g @subsquid/cli@latest
+   ```
 
-# Run indexer
-sqd process
+4. Install dependencies
 
-# Shut down the database
-sqd down
+   ```sh
+   npm ci
+   ```
 
-# In another terminal, launch the server
-sqd serve
-#open http://localhost:4000/graphql
-```
+5. Compile the project
 
-Visit the documentation page for more details on using subsquid for Fuel.
+   ```sh
+   sqd build
+   ```
+
+6. Launch Postgres database to store the data
+
+   ```sh
+   sqd up
+   ```
+
+7. Apply database migrations to create the target schema
+
+   ```sh
+   sqd migration:generate
+   ```
+
+8. Run indexer
+
+   ```sh
+   sqd process
+   ```
+
+9. In another terminal, launch the server (open http://localhost:4000/graphql)
+
+   ```sh
+   sqd serve
+   ```    
+
+10. Shut down the database
+
+   ```sh
+   sqd down
+   ```   
+
+
