@@ -28,12 +28,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -45,12 +45,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -58,46 +58,21 @@ const _abi = {
     },
     {
       "typeId": 3,
-      "type": "(_, _, _, _, _, _, _, _)",
+      "type": "(_, _, _)",
       "components": [
         {
           "name": "__tuple_element",
-          "type": 21,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 22,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "__tuple_element",
-          "type": 22,
-          "typeArguments": null
-        },
-        {
-          "name": "__tuple_element",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "__tuple_element",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "__tuple_element",
-          "type": 22,
-          "typeArguments": null
-        },
-        {
-          "name": "__tuple_element",
-          "type": 38,
+          "type": 7,
           "typeArguments": null
         }
       ],
@@ -105,17 +80,68 @@ const _abi = {
     },
     {
       "typeId": 4,
-      "type": "b256",
-      "components": null,
+      "type": "(_, _, _, _)",
+      "components": [
+        {
+          "name": "__tuple_element",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 43,
+          "typeArguments": null
+        }
+      ],
       "typeParameters": null
     },
     {
       "typeId": 5,
-      "type": "enum AccountError",
+      "type": "(_, _, _, _, _, _, _)",
       "components": [
         {
-          "name": "InsufficientBalance",
-          "type": 1,
+          "name": "__tuple_element",
+          "type": 25,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 25,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "__tuple_element",
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -123,6 +149,30 @@ const _abi = {
     },
     {
       "typeId": 6,
+      "type": "b256",
+      "components": null,
+      "typeParameters": null
+    },
+    {
+      "typeId": 7,
+      "type": "bool",
+      "components": null,
+      "typeParameters": null
+    },
+    {
+      "typeId": 8,
+      "type": "enum AccountError",
+      "components": [
+        {
+          "name": "InsufficientBalance",
+          "type": 3,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 9,
       "type": "enum AssetError",
       "components": [
         {
@@ -139,7 +189,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 7,
+      "typeId": 10,
       "type": "enum AssetType",
       "components": [
         {
@@ -156,7 +206,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 8,
+      "typeId": 11,
       "type": "enum AuthError",
       "components": [
         {
@@ -168,26 +218,31 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 9,
+      "typeId": 12,
       "type": "enum Identity",
       "components": [
         {
           "name": "Address",
-          "type": 21,
+          "type": 24,
           "typeArguments": null
         },
         {
           "name": "ContractId",
-          "type": 25,
+          "type": 28,
           "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 10,
+      "typeId": 13,
       "type": "enum LimitType",
       "components": [
+        {
+          "name": "GTC",
+          "type": 0,
+          "typeArguments": null
+        },
         {
           "name": "IOC",
           "type": 0,
@@ -202,7 +257,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 11,
+      "typeId": 14,
       "type": "enum MatchError",
       "components": [
         {
@@ -219,12 +274,17 @@ const _abi = {
           "name": "CantFulfillMany",
           "type": 0,
           "typeArguments": null
+        },
+        {
+          "name": "CantFulfillFOK",
+          "type": 0,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 12,
+      "typeId": 15,
       "type": "enum Option",
       "components": [
         {
@@ -234,16 +294,16 @@ const _abi = {
         },
         {
           "name": "Some",
-          "type": 18,
+          "type": 21,
           "typeArguments": null
         }
       ],
       "typeParameters": [
-        18
+        21
       ]
     },
     {
-      "typeId": 13,
+      "typeId": 16,
       "type": "enum OrderChangeType",
       "components": [
         {
@@ -265,12 +325,17 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 14,
+      "typeId": 17,
       "type": "enum OrderError",
       "components": [
         {
+          "name": "OrderDuplicate",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
           "name": "OrderNotFound",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         },
         {
@@ -289,15 +354,25 @@ const _abi = {
           "typeArguments": null
         },
         {
+          "name": "ZeroUnlockAmount",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "ZeroTransferAmount",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
           "name": "FailedToRemove",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 15,
+      "typeId": 18,
       "type": "enum OrderType",
       "components": [
         {
@@ -314,7 +389,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 16,
+      "typeId": 19,
       "type": "enum ReentrancyError",
       "components": [
         {
@@ -326,7 +401,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 17,
+      "typeId": 20,
       "type": "enum ValueError",
       "components": [
         {
@@ -348,34 +423,25 @@ const _abi = {
           "name": "InvalidFeeAmount",
           "type": 1,
           "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 18,
-      "type": "generic T",
-      "components": null,
-      "typeParameters": null
-    },
-    {
-      "typeId": 19,
-      "type": "raw untyped ptr",
-      "components": null,
-      "typeParameters": null
-    },
-    {
-      "typeId": 20,
-      "type": "struct Account",
-      "components": [
+        },
         {
-          "name": "liquid",
-          "type": 23,
+          "name": "InvalidEpoch",
+          "type": 4,
           "typeArguments": null
         },
         {
-          "name": "locked",
-          "type": 23,
+          "name": "InvalidFeeSorting",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "InvalidFeeZeroBased",
+          "type": 0,
+          "typeArguments": null
+        },
+        {
+          "name": "InvalidValueSame",
+          "type": 0,
           "typeArguments": null
         }
       ],
@@ -383,40 +449,28 @@ const _abi = {
     },
     {
       "typeId": 21,
-      "type": "struct Address",
-      "components": [
-        {
-          "name": "bits",
-          "type": 4,
-          "typeArguments": null
-        }
-      ],
+      "type": "generic T",
+      "components": null,
       "typeParameters": null
     },
     {
       "typeId": 22,
-      "type": "struct AssetId",
-      "components": [
-        {
-          "name": "bits",
-          "type": 4,
-          "typeArguments": null
-        }
-      ],
+      "type": "raw untyped ptr",
+      "components": null,
       "typeParameters": null
     },
     {
       "typeId": 23,
-      "type": "struct Balance",
+      "type": "struct Account",
       "components": [
         {
-          "name": "base",
-          "type": 39,
+          "name": "liquid",
+          "type": 26,
           "typeArguments": null
         },
         {
-          "name": "quote",
-          "type": 39,
+          "name": "locked",
+          "type": 26,
           "typeArguments": null
         }
       ],
@@ -424,11 +478,11 @@ const _abi = {
     },
     {
       "typeId": 24,
-      "type": "struct CancelOrderEvent",
+      "type": "struct Address",
       "components": [
         {
-          "name": "order_id",
-          "type": 4,
+          "name": "bits",
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -436,11 +490,11 @@ const _abi = {
     },
     {
       "typeId": 25,
-      "type": "struct ContractId",
+      "type": "struct AssetId",
       "components": [
         {
           "name": "bits",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -448,21 +502,16 @@ const _abi = {
     },
     {
       "typeId": 26,
-      "type": "struct DepositEvent",
+      "type": "struct Balance",
       "components": [
         {
-          "name": "amount",
-          "type": 39,
+          "name": "base",
+          "type": 43,
           "typeArguments": null
         },
         {
-          "name": "asset",
-          "type": 22,
-          "typeArguments": null
-        },
-        {
-          "name": "user",
-          "type": 9,
+          "name": "quote",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -470,41 +519,16 @@ const _abi = {
     },
     {
       "typeId": 27,
-      "type": "struct MatchOrderEvent",
+      "type": "struct CancelOrderEvent",
       "components": [
         {
           "name": "order_id",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         },
         {
-          "name": "asset",
-          "type": 22,
-          "typeArguments": null
-        },
-        {
-          "name": "order_matcher",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "owner",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "counterparty",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "match_size",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "match_price",
-          "type": 39,
+          "name": "user",
+          "type": 12,
           "typeArguments": null
         }
       ],
@@ -512,36 +536,11 @@ const _abi = {
     },
     {
       "typeId": 28,
-      "type": "struct OpenOrderEvent",
+      "type": "struct ContractId",
       "components": [
         {
-          "name": "amount",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "asset",
-          "type": 22,
-          "typeArguments": null
-        },
-        {
-          "name": "order_type",
-          "type": 15,
-          "typeArguments": null
-        },
-        {
-          "name": "order_id",
-          "type": 4,
-          "typeArguments": null
-        },
-        {
-          "name": "price",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "user",
-          "type": 9,
+          "name": "bits",
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -549,46 +548,21 @@ const _abi = {
     },
     {
       "typeId": 29,
-      "type": "struct Order",
+      "type": "struct DepositEvent",
       "components": [
         {
           "name": "amount",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
-          "name": "asset_type",
-          "type": 7,
+          "name": "asset",
+          "type": 25,
           "typeArguments": null
         },
         {
-          "name": "order_type",
-          "type": 15,
-          "typeArguments": null
-        },
-        {
-          "name": "owner",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "price",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "block_height",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "matcher_fee",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "protocol_fee",
-          "type": 39,
+          "name": "user",
+          "type": 12,
           "typeArguments": null
         }
       ],
@@ -596,36 +570,41 @@ const _abi = {
     },
     {
       "typeId": 30,
-      "type": "struct OrderChangeInfo",
+      "type": "struct MatchOrderEvent",
       "components": [
         {
-          "name": "change_type",
-          "type": 13,
+          "name": "order_id",
+          "type": 6,
           "typeArguments": null
         },
         {
-          "name": "block_height",
-          "type": 38,
+          "name": "asset",
+          "type": 25,
           "typeArguments": null
         },
         {
-          "name": "sender",
-          "type": 9,
+          "name": "order_matcher",
+          "type": 12,
           "typeArguments": null
         },
         {
-          "name": "tx_id",
-          "type": 4,
+          "name": "owner",
+          "type": 12,
           "typeArguments": null
         },
         {
-          "name": "amount_before",
-          "type": 39,
+          "name": "counterparty",
+          "type": 12,
           "typeArguments": null
         },
         {
-          "name": "amount_after",
-          "type": 39,
+          "name": "match_size",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "match_price",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -633,30 +612,93 @@ const _abi = {
     },
     {
       "typeId": 31,
-      "type": "struct RawVec",
-      "components": [
-        {
-          "name": "ptr",
-          "type": 19,
-          "typeArguments": null
-        },
-        {
-          "name": "cap",
-          "type": 39,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": [
-        18
-      ]
-    },
-    {
-      "typeId": 32,
-      "type": "struct SetMatcherRewardEvent",
+      "type": "struct OpenOrderEvent",
       "components": [
         {
           "name": "amount",
-          "type": 38,
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "asset",
+          "type": 25,
+          "typeArguments": null
+        },
+        {
+          "name": "order_type",
+          "type": 18,
+          "typeArguments": null
+        },
+        {
+          "name": "order_id",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "price",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "user",
+          "type": 12,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 32,
+      "type": "struct Order",
+      "components": [
+        {
+          "name": "amount",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "asset_type",
+          "type": 10,
+          "typeArguments": null
+        },
+        {
+          "name": "order_type",
+          "type": 18,
+          "typeArguments": null
+        },
+        {
+          "name": "owner",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "price",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "block_height",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "order_height",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "matcher_fee",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "protocol_maker_fee",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "protocol_taker_fee",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -664,11 +706,36 @@ const _abi = {
     },
     {
       "typeId": 33,
-      "type": "struct SetProtocolFeeEvent",
+      "type": "struct OrderChangeInfo",
       "components": [
         {
-          "name": "amount",
-          "type": 38,
+          "name": "change_type",
+          "type": 16,
+          "typeArguments": null
+        },
+        {
+          "name": "block_height",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "sender",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "tx_id",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "amount_before",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "amount_after",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -676,41 +743,21 @@ const _abi = {
     },
     {
       "typeId": 34,
-      "type": "struct TradeOrderEvent",
+      "type": "struct ProtocolFee",
       "components": [
         {
-          "name": "base_sell_order_id",
-          "type": 4,
+          "name": "maker_fee",
+          "type": 43,
           "typeArguments": null
         },
         {
-          "name": "base_buy_order_id",
-          "type": 4,
+          "name": "taker_fee",
+          "type": 43,
           "typeArguments": null
         },
         {
-          "name": "order_matcher",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "trade_size",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "trade_price",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "block_height",
-          "type": 38,
-          "typeArguments": null
-        },
-        {
-          "name": "tx_id",
-          "type": 4,
+          "name": "volume_threshold",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -718,46 +765,35 @@ const _abi = {
     },
     {
       "typeId": 35,
-      "type": "struct Vec",
+      "type": "struct RawVec",
       "components": [
         {
-          "name": "buf",
-          "type": 31,
-          "typeArguments": [
-            {
-              "name": "",
-              "type": 18,
-              "typeArguments": null
-            }
-          ]
-        },
-        {
-          "name": "len",
-          "type": 39,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": [
-        18
-      ]
-    },
-    {
-      "typeId": 36,
-      "type": "struct WithdrawEvent",
-      "components": [
-        {
-          "name": "amount",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "asset",
+          "name": "ptr",
           "type": 22,
           "typeArguments": null
         },
         {
-          "name": "user",
-          "type": 9,
+          "name": "cap",
+          "type": 43,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": [
+        21
+      ]
+    },
+    {
+      "typeId": 36,
+      "type": "struct SetEpochEvent",
+      "components": [
+        {
+          "name": "epoch",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "epoch_duration",
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -765,21 +801,11 @@ const _abi = {
     },
     {
       "typeId": 37,
-      "type": "struct WithdrawProtocolFeeEvent",
+      "type": "struct SetMatcherRewardEvent",
       "components": [
         {
           "name": "amount",
-          "type": 39,
-          "typeArguments": null
-        },
-        {
-          "name": "to",
-          "type": 9,
-          "typeArguments": null
-        },
-        {
-          "name": "owner",
-          "type": 9,
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -787,12 +813,139 @@ const _abi = {
     },
     {
       "typeId": 38,
+      "type": "struct SetProtocolFeeEvent",
+      "components": [
+        {
+          "name": "protocol_fee",
+          "type": 40,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 34,
+              "typeArguments": null
+            }
+          ]
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 39,
+      "type": "struct TradeOrderEvent",
+      "components": [
+        {
+          "name": "base_sell_order_id",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "base_buy_order_id",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "base_sell_order_limit",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "base_buy_order_limit",
+          "type": 13,
+          "typeArguments": null
+        },
+        {
+          "name": "order_matcher",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "trade_size",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "trade_price",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "block_height",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "tx_id",
+          "type": 6,
+          "typeArguments": null
+        },
+        {
+          "name": "order_seller",
+          "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "order_buyer",
+          "type": 12,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 40,
+      "type": "struct Vec",
+      "components": [
+        {
+          "name": "buf",
+          "type": 35,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 21,
+              "typeArguments": null
+            }
+          ]
+        },
+        {
+          "name": "len",
+          "type": 43,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": [
+        21
+      ]
+    },
+    {
+      "typeId": 41,
+      "type": "struct WithdrawEvent",
+      "components": [
+        {
+          "name": "amount",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "asset",
+          "type": 25,
+          "typeArguments": null
+        },
+        {
+          "name": "user",
+          "type": 12,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 42,
       "type": "u32",
       "components": null,
       "typeParameters": null
     },
     {
-      "typeId": 39,
+      "typeId": 43,
       "type": "u64",
       "components": null,
       "typeParameters": null
@@ -803,7 +956,7 @@ const _abi = {
       "inputs": [
         {
           "name": "order_id",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -814,6 +967,24 @@ const _abi = {
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Cancels an existing order with the specified order ID."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_id The unique identifier of the order to be canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -833,6 +1004,30 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Deposits a specified amount of an asset into the caller's account."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice The function requires that the sender sends a non-zero amount of the specified asset."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param None - The function doesnt take any input parameters; it uses context information."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "payable",
           "arguments": []
         },
@@ -849,36 +1044,36 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "order_type",
-          "type": 15,
+          "type": 18,
           "typeArguments": null
         },
         {
           "name": "limit_type",
-          "type": 10,
+          "type": 13,
           "typeArguments": null
         },
         {
           "name": "price",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "slippage",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "orders",
-          "type": 35,
+          "type": 40,
           "typeArguments": [
             {
               "name": "",
-              "type": 4,
+              "type": 6,
               "typeArguments": null
             }
           ]
@@ -887,10 +1082,88 @@ const _abi = {
       "name": "fulfill_order_many",
       "output": {
         "name": "",
-        "type": 4,
+        "type": 6,
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Attempts to fulfill a single order by matching it against multiple orders from a provided list."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function creates a new order with the given parameters and iterates through the list of existing orders,"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      attempting to match the new order with existing orders. It handles full and partial matches according to the specified limit type:"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - GTC (Good-Til-Canceled): The order remains active until it is either fully filled or canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - IOC (Immediate-Or-Cancel): The order can be partially filled immediately, and any unfilled portion is canceled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      - FOK (Fill-Or-Kill): The order must be fully filled immediately, or the entire transaction fails."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be fulfilled in the new order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_type The type of the order being fulfilled (e.g., buy or sell)."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param limit_type The limit type for the new order: GTC, IOC, or FOK."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param price The price at which the new order is to be fulfilled."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param slippage The maximum allowable slippage (as a percentage) for the price during the matching process."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param orders A vector of order IDs representing the existing orders to match against the new order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return b256 The unique identifier of the newly created order. If the order is partially matched and canceled (in the case of IOC), the ID corresponds to the canceled order."
+          ]
+        },
         {
           "name": "payable",
           "arguments": []
@@ -908,11 +1181,11 @@ const _abi = {
       "inputs": [
         {
           "name": "orders",
-          "type": 35,
+          "type": 40,
           "typeArguments": [
             {
               "name": "",
-              "type": 4,
+              "type": 6,
               "typeArguments": null
             }
           ]
@@ -926,6 +1199,24 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Attempts to match multiple orders provided in a list."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param orders A vector containing the unique identifiers of the orders to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
@@ -938,12 +1229,12 @@ const _abi = {
       "inputs": [
         {
           "name": "order0_id",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         },
         {
           "name": "order1_id",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
@@ -955,6 +1246,30 @@ const _abi = {
       },
       "attributes": [
         {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Matches two orders identified by their respective order IDs."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order0_id The unique identifier of the first order to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order1_id The unique identifier of the second order to be matched."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
           "name": "storage",
           "arguments": [
             "read",
@@ -967,30 +1282,56 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "order_type",
-          "type": 15,
+          "type": 18,
           "typeArguments": null
         },
         {
           "name": "price",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         }
       ],
       "name": "open_order",
       "output": {
         "name": "",
-        "type": 4,
+        "type": 6,
         "typeArguments": null
       },
       "attributes": [
         {
-          "name": "payable",
-          "arguments": []
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Opens a new order with a specified amount, order type, and price."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be used in the order."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param order_type The type of the order being created (e.g., buy or sell)."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param price The price at which the order should be placed."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return b256 The unique identifier of the newly opened order."
+          ]
         },
         {
           "name": "storage",
@@ -1004,8 +1345,78 @@ const _abi = {
     {
       "inputs": [
         {
+          "name": "epoch",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "epoch_duration",
+          "type": 43,
+          "typeArguments": null
+        }
+      ],
+      "name": "set_epoch",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Sets the current epoch and its duration."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to set a new epoch and its duration."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It ensures that the new epoch is not in the past and that the epoch plus its duration extends beyond the current time."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the epoch is set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param epoch The new epoch value to be set. Must be greater than or equal to the current epoch."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param epoch_duration The duration of the epoch in seconds. The epoch plus its duration must extend beyond the current time."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
           "name": "amount",
-          "type": 38,
+          "type": 43,
           "typeArguments": null
         }
       ],
@@ -1017,56 +1428,41 @@ const _abi = {
       },
       "attributes": [
         {
-          "name": "storage",
+          "name": "doc-comment",
           "arguments": [
-            "write"
+            " @notice Sets the matcher fee to a specified amount."
           ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "amount",
-          "type": 38,
-          "typeArguments": null
-        }
-      ],
-      "name": "set_protocol_fee",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "write"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [
-        {
-          "name": "amount",
-          "type": 39,
-          "typeArguments": null
         },
         {
-          "name": "asset_type",
-          "type": 7,
-          "typeArguments": null
-        }
-      ],
-      "name": "withdraw",
-      "output": {
-        "name": "",
-        "type": 0,
-        "typeArguments": null
-      },
-      "attributes": [
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to update the matcher fee."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It checks that the new fee amount is different from the current one to avoid redundant updates."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the matcher fee is set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The new matcher fee amount to be set. It must be different from the current matcher fee."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -1079,18 +1475,118 @@ const _abi = {
     {
       "inputs": [
         {
-          "name": "to",
-          "type": 9,
-          "typeArguments": null
+          "name": "protocol_fee",
+          "type": 40,
+          "typeArguments": [
+            {
+              "name": "",
+              "type": 34,
+              "typeArguments": null
+            }
+          ]
         }
       ],
-      "name": "withdraw_protocol_fee",
+      "name": "set_protocol_fee",
       "output": {
         "name": "",
         "type": 0,
         "typeArguments": null
       },
       "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Sets the protocol fees based on volume thresholds."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @dev This function allows the contract owner to set a list of protocol fees."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      It ensures that the first fee in the list has a volume threshold of zero and that the fees are sorted by volume threshold."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "      The function is restricted to the contract owner and logs an event after the protocol fees are set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param protocol_fee A vector of ProtocolFee structures that define the fee rates and their corresponding volume thresholds."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            "                     The first element must have a volume threshold of zero, and the list must be sorted by volume threshold."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "amount",
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "asset_type",
+          "type": 10,
+          "typeArguments": null
+        }
+      ],
+      "name": "withdraw",
+      "output": {
+        "name": "",
+        "type": 0,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @notice Withdraws a specified amount of a given asset from the callers account."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param amount The amount of the asset to be withdrawn. Must be greater than zero."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @param asset_type The type of the asset to be withdrawn."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " @return None - The function does not return a value."
+          ]
+        },
         {
           "name": "storage",
           "arguments": [
@@ -1104,21 +1600,15 @@ const _abi = {
       "inputs": [
         {
           "name": "user",
-          "type": 9,
+          "type": 12,
           "typeArguments": null
         }
       ],
       "name": "account",
       "output": {
         "name": "",
-        "type": 12,
-        "typeArguments": [
-          {
-            "name": "",
-            "type": 20,
-            "typeArguments": null
-          }
-        ]
+        "type": 23,
+        "typeArguments": null
       },
       "attributes": [
         {
@@ -1134,17 +1624,34 @@ const _abi = {
       "name": "config",
       "output": {
         "name": "",
-        "type": 3,
+        "type": 5,
         "typeArguments": null
       },
       "attributes": null
     },
     {
       "inputs": [],
+      "name": "get_epoch",
+      "output": {
+        "name": "",
+        "type": 1,
+        "typeArguments": null
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [],
       "name": "matcher_fee",
       "output": {
         "name": "",
-        "type": 38,
+        "type": 43,
         "typeArguments": null
       },
       "attributes": [
@@ -1160,18 +1667,18 @@ const _abi = {
       "inputs": [
         {
           "name": "order",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
       "name": "order",
       "output": {
         "name": "",
-        "type": 12,
+        "type": 15,
         "typeArguments": [
           {
             "name": "",
-            "type": 29,
+            "type": 32,
             "typeArguments": null
           }
         ]
@@ -1189,18 +1696,18 @@ const _abi = {
       "inputs": [
         {
           "name": "order_id",
-          "type": 4,
+          "type": 6,
           "typeArguments": null
         }
       ],
       "name": "order_change_info",
       "output": {
         "name": "",
-        "type": 35,
+        "type": 40,
         "typeArguments": [
           {
             "name": "",
-            "type": 30,
+            "type": 33,
             "typeArguments": null
           }
         ]
@@ -1218,29 +1725,34 @@ const _abi = {
       "inputs": [
         {
           "name": "order_type",
-          "type": 15,
+          "type": 18,
           "typeArguments": null
         },
         {
           "name": "owner",
-          "type": 9,
+          "type": 12,
           "typeArguments": null
         },
         {
           "name": "price",
-          "type": 39,
+          "type": 43,
           "typeArguments": null
         },
         {
           "name": "block_height",
-          "type": 38,
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "order_height",
+          "type": 43,
           "typeArguments": null
         }
       ],
       "name": "order_id",
       "output": {
         "name": "",
-        "type": 4,
+        "type": 6,
         "typeArguments": null
       },
       "attributes": null
@@ -1250,7 +1762,36 @@ const _abi = {
       "name": "protocol_fee",
       "output": {
         "name": "",
-        "type": 38,
+        "type": 40,
+        "typeArguments": [
+          {
+            "name": "",
+            "type": 34,
+            "typeArguments": null
+          }
+        ]
+      },
+      "attributes": [
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "user",
+          "type": 12,
+          "typeArguments": null
+        }
+      ],
+      "name": "protocol_fee_user",
+      "output": {
+        "name": "",
+        "type": 1,
         "typeArguments": null
       },
       "attributes": [
@@ -1266,31 +1807,19 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 39,
+          "type": 43,
+          "typeArguments": null
+        },
+        {
+          "name": "user",
+          "type": 12,
           "typeArguments": null
         }
       ],
-      "name": "protocol_fee_amount",
+      "name": "protocol_fee_user_amount",
       "output": {
         "name": "",
-        "type": 39,
-        "typeArguments": null
-      },
-      "attributes": [
-        {
-          "name": "storage",
-          "arguments": [
-            "read"
-          ]
-        }
-      ]
-    },
-    {
-      "inputs": [],
-      "name": "total_protocol_fee",
-      "output": {
-        "name": "",
-        "type": 39,
+        "type": 1,
         "typeArguments": null
       },
       "attributes": [
@@ -1306,18 +1835,18 @@ const _abi = {
       "inputs": [
         {
           "name": "user",
-          "type": 9,
+          "type": 12,
           "typeArguments": null
         }
       ],
       "name": "user_orders",
       "output": {
         "name": "",
-        "type": 35,
+        "type": 40,
         "typeArguments": [
           {
             "name": "",
-            "type": 4,
+            "type": 6,
             "typeArguments": null
           }
         ]
@@ -1337,7 +1866,7 @@ const _abi = {
       "logId": "5557842539076482339",
       "loggedType": {
         "name": "",
-        "type": 16,
+        "type": 19,
         "typeArguments": []
       }
     },
@@ -1345,7 +1874,7 @@ const _abi = {
       "logId": "999626799421532101",
       "loggedType": {
         "name": "",
-        "type": 14,
+        "type": 17,
         "typeArguments": []
       }
     },
@@ -1353,7 +1882,7 @@ const _abi = {
       "logId": "487470194140633944",
       "loggedType": {
         "name": "",
-        "type": 8,
+        "type": 11,
         "typeArguments": []
       }
     },
@@ -1361,7 +1890,7 @@ const _abi = {
       "logId": "15329379498675066312",
       "loggedType": {
         "name": "",
-        "type": 5,
+        "type": 8,
         "typeArguments": []
       }
     },
@@ -1369,7 +1898,7 @@ const _abi = {
       "logId": "14676650066558707344",
       "loggedType": {
         "name": "",
-        "type": 24,
+        "type": 27,
         "typeArguments": []
       }
     },
@@ -1377,7 +1906,7 @@ const _abi = {
       "logId": "4038555509566971562",
       "loggedType": {
         "name": "",
-        "type": 17,
+        "type": 20,
         "typeArguments": []
       }
     },
@@ -1385,7 +1914,7 @@ const _abi = {
       "logId": "16169998749359270814",
       "loggedType": {
         "name": "",
-        "type": 6,
+        "type": 9,
         "typeArguments": []
       }
     },
@@ -1393,7 +1922,7 @@ const _abi = {
       "logId": "12590297951544646752",
       "loggedType": {
         "name": "",
-        "type": 26,
+        "type": 29,
         "typeArguments": []
       }
     },
@@ -1401,7 +1930,7 @@ const _abi = {
       "logId": "7812135309850120461",
       "loggedType": {
         "name": "",
-        "type": 28,
+        "type": 31,
         "typeArguments": []
       }
     },
@@ -1409,7 +1938,7 @@ const _abi = {
       "logId": "2271581833574730066",
       "loggedType": {
         "name": "",
-        "type": 27,
+        "type": 30,
         "typeArguments": []
       }
     },
@@ -1417,36 +1946,12 @@ const _abi = {
       "logId": "18305104039093136274",
       "loggedType": {
         "name": "",
-        "type": 34,
+        "type": 39,
         "typeArguments": []
       }
     },
     {
-      "logId": "15838754841496526215",
-      "loggedType": {
-        "name": "",
-        "type": 11,
-        "typeArguments": []
-      }
-    },
-    {
-      "logId": "649664855397936830",
-      "loggedType": {
-        "name": "",
-        "type": 32,
-        "typeArguments": []
-      }
-    },
-    {
-      "logId": "10772010129570911307",
-      "loggedType": {
-        "name": "",
-        "type": 33,
-        "typeArguments": []
-      }
-    },
-    {
-      "logId": "10918704871079408520",
+      "logId": "5744192922338635869",
       "loggedType": {
         "name": "",
         "type": 36,
@@ -1454,10 +1959,34 @@ const _abi = {
       }
     },
     {
-      "logId": "10165625215314906042",
+      "logId": "15838754841496526215",
+      "loggedType": {
+        "name": "",
+        "type": 14,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": "649664855397936830",
       "loggedType": {
         "name": "",
         "type": 37,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": "10772010129570911307",
+      "loggedType": {
+        "name": "",
+        "type": 38,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": "10918704871079408520",
+      "loggedType": {
+        "name": "",
+        "type": 41,
         "typeArguments": []
       }
     }
@@ -1468,91 +1997,64 @@ const _abi = {
       "name": "BASE_ASSET",
       "configurableType": {
         "name": "",
-        "type": 22,
+        "type": 25,
         "typeArguments": []
       },
-      "offset": 71752
+      "offset": 81368
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 38,
+        "type": 42,
         "typeArguments": null
       },
-      "offset": 71784
-    },
-    {
-      "name": "OWNER",
-      "configurableType": {
-        "name": "",
-        "type": 21,
-        "typeArguments": []
-      },
-      "offset": 71840
-    },
-    {
-      "name": "PRICE_DECIMALS",
-      "configurableType": {
-        "name": "",
-        "type": 38,
-        "typeArguments": null
-      },
-      "offset": 71872
+      "offset": 81400
     },
     {
       "name": "QUOTE_ASSET",
       "configurableType": {
         "name": "",
-        "type": 22,
+        "type": 25,
         "typeArguments": []
       },
-      "offset": 71880
+      "offset": 81456
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 38,
+        "type": 42,
         "typeArguments": null
       },
-      "offset": 71912
+      "offset": 81488
     },
     {
-      "name": "FUEL_ASSET",
+      "name": "OWNER",
       "configurableType": {
         "name": "",
-        "type": 22,
+        "type": 12,
         "typeArguments": []
       },
-      "offset": 71808
+      "offset": 81408
     },
     {
-      "name": "ETH_BASE_PRICE",
+      "name": "PRICE_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 39,
+        "type": 42,
         "typeArguments": null
       },
-      "offset": 71792
-    },
-    {
-      "name": "ETH_QUOTE_PRICE",
-      "configurableType": {
-        "name": "",
-        "type": 39,
-        "typeArguments": null
-      },
-      "offset": 71800
+      "offset": 81448
     },
     {
       "name": "VERSION",
       "configurableType": {
         "name": "",
-        "type": 38,
+        "type": 42,
         "typeArguments": null
       },
-      "offset": 71920
+      "offset": 81496
     }
   ]
 };

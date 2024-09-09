@@ -8,25 +8,30 @@ import { OrderbookAbi__factory } from './abi'
 import {
     TradeOrderEventOutput,
     OpenOrderEventOutput,
-    MatchOrderEventOutput,
     CancelOrderEventOutput,
     IdentityOutput,
+    DepositEventOutput,
+    WithdrawEventOutput,
 } from './abi/OrderbookAbi'
 import {
     Order,
+    Balance,
     OrderType,
     OpenOrderEvent,
     CancelOrderEvent,
-    MatchOrderEvent,
     TradeOrderEvent,
     OrderStatus,
     ActiveBuyOrder,
     ActiveSellOrder,
+    DepositEvent,
+    WithdrawEvent,
 } from './model'
 import isEvent from './utils/isEvent'
 import tai64ToDate from './utils/tai64ToDate'
 import assert from 'assert'
-const ORDERBOOK_ID = '0x58959d086d8a6ee8cf8eeb572b111edb21661266be4b4885383748d11b72d0aa'
+import { getHash } from './utils/getHash'
+import { BASE_ASSET, BASE_DECIMAL, PRICE_DECIMAL, QUOTE_ASSET, QUOTE_DECIMAL } from './utils/marketConfig'
+const ORDERBOOK_ID = '0x1e4a18c96d53b5bdeda03652ed58288cfdd03a9560088da3321d1052a9859d7a'
 
 // First we create a DataSource - component,
 // that defines where to get the data and what data should we get.
@@ -80,13 +85,15 @@ run(dataSource, database, async (ctx) => {
     // to enrich block items with references to related objects.
     let blocks = ctx.blocks.map(augmentBlock)
 
+    let balances: Map<string, Balance> = new Map()
     let orders: Map<string, Order> = new Map()
     let activeBuyOrders: Map<string, ActiveBuyOrder> = new Map()
     let activeSellOrders: Map<string, ActiveSellOrder> = new Map()
     let tradeOrderEvents: Map<string, TradeOrderEvent> = new Map()
-    let matchOrderEvents: Map<string, MatchOrderEvent> = new Map()
     let openOrderEvents: Map<string, OpenOrderEvent> = new Map()
     let cancelOrderEvents: Map<string, CancelOrderEvent> = new Map()
+    let depositEvents: Map<string, DepositEvent> = new Map()
+    let withdrawEvents: Map<string, WithdrawEvent> = new Map()
 
     const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = []
     for (let block of blocks) {
@@ -133,87 +140,148 @@ run(dataSource, database, async (ctx) => {
             })
             openOrderEvents.set(event.id, event)
 
-            let props = {
+            let order = {
                 ...event,
                 id: log.order_id,
                 initialAmount: BigInt(log.amount.toString()),
                 status: OrderStatus.Active,
-                amount: BigInt(log.amount.toString()),
-                asset: log.asset.bits,
-                orderType: log.order_type as unknown as OrderType,
-                price: BigInt(log.price.toString()),
-                user: getIdentity(log.user),
-                timestamp: tai64ToDate(receipt.time).toISOString(),
             }
-            let order = new Order(props)
-            orders.set(order.id, order)
+            orders.set(order.id, new Order(order))
 
             if (order.orderType == OrderType.Buy) {
-                let buyOrder = new ActiveBuyOrder(props)
+                let buyOrder = new ActiveBuyOrder(order)
                 activeBuyOrders.set(order.id, buyOrder)
             } else if (order.orderType === OrderType.Sell) {
-                let sellOrder = new ActiveSellOrder(props)
+                let sellOrder = new ActiveSellOrder(order)
                 activeSellOrders.set(order.id, sellOrder)
             }
+
+            if (order.orderType == OrderType.Buy) {
+                const balanceId = getHash(`${QUOTE_ASSET}-${getIdentity(log.user)}`);
+                let balance = await lookupBalance(ctx.store, balances, balanceId)
+
+                if (!balance) {
+                    console.log(
+                        `Cannot find a balance; user:${getIdentity(log.user)}; asset: ${QUOTE_ASSET}; id: ${balanceId}`
+                    );
+                    return;
+                }
+                const updatedAmount = balance.amount - BigInt(log.amount.toString()) * BigInt(log.price.toString()) * BigInt(QUOTE_DECIMAL) / BigInt(BASE_DECIMAL) / BigInt(PRICE_DECIMAL);
+                balance.amount = updatedAmount;
+                balances.set(balance.id, balance);
+
+
+            } else if (order.orderType === OrderType.Sell) {
+                const balanceId = getHash(`${BASE_ASSET}-${getIdentity(log.user)}`);
+                let balance = await lookupBalance(ctx.store, balances, balanceId)
+
+                if (!balance) {
+                    console.log(
+                        `Cannot find a balance; user:${getIdentity(log.user)}; asset: ${BASE_ASSET}; id: ${balanceId}`
+                    );
+                    return;
+                }
+
+                const updatedAmount = balance.amount - BigInt(log.amount.toString());
+                balance.amount = updatedAmount;
+                balances.set(balance.id, balance);
+            }
+
 
         } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new TradeOrderEvent({
                 id: receipt.receiptId,
-                baseSellOrderId: log.base_sell_order_id,
-                baseBuyOrderId: log.base_buy_order_id,
-                txId: log.tx_id,
-                orderMatcher: getIdentity(log.order_matcher),
+                sellOrderId: log.base_sell_order_id,
+                buyOrderId: log.base_buy_order_id,
                 tradeSize: BigInt(log.trade_size.toString()),
                 tradePrice: BigInt(log.trade_price.toString()),
+                orderMatcher: getIdentity(log.order_matcher),
+                seller: getIdentity(log.order_seller),
+                buyer: getIdentity(log.order_buyer),
+                txId: receipt.txId,
                 timestamp: tai64ToDate(receipt.time).toISOString(),
             })
             tradeOrderEvents.set(event.id, event)
-        } else if (isEvent<MatchOrderEventOutput>('MatchOrderEvent', log, OrderbookAbi__factory.abi)) {
-            let event = new MatchOrderEvent({
-                id: receipt.receiptId,
-                orderId: log.order_id,
-                txId: receipt.txId,
-                asset: log.asset.bits,
-                orderMatcher: getIdentity(log.order_matcher),
-                owner: getIdentity(log.owner),
-                counterparty: getIdentity(log.counterparty),
-                matchSize: BigInt(log.match_size.toString()),
-                matchPrice: BigInt(log.match_price.toString()),
-                timestamp: tai64ToDate(receipt.time).toISOString(),
-            })
-            matchOrderEvents.set(event.id, event)
 
-            let order = assertNotNull(await lookupOrder(ctx.store, orders, log.order_id))
-            let amount = order.amount - event.matchSize
-            let update = {
-                amount,
-                status: amount === 0n ? OrderStatus.Closed : OrderStatus.Active,
+            let sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
+            let buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
+
+
+            let updatedSellAmount = sellOrder.amount - event.tradeSize
+            const isSellOrderClosed = updatedSellAmount === 0n
+            let updatedSellOrder = {
+                updatedSellAmount,
+                status: updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
                 timestamp: tai64ToDate(receipt.time).toISOString(),
             }
-            Object.assign(order, update)
+            Object.assign(sellOrder, updatedSellOrder)
 
-            if (order.status == OrderStatus.Closed) {
-                if (order.orderType == OrderType.Buy) {
-                    await ctx.store.remove(ActiveBuyOrder, order.id)
-                    activeBuyOrders.delete(order.id)
-                } else if (order.orderType == OrderType.Sell) {
-                    await ctx.store.remove(ActiveSellOrder, order.id)
-                    activeSellOrders.delete(order.id)
-                }
+
+
+            let updatedBuyAmount = buyOrder.amount - event.tradeSize
+            const isBuyOrderClosed = updatedBuyAmount === 0n
+            let updatedBuyOrder = {
+                updatedBuyAmount,
+                status: updatedBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
+                timestamp: tai64ToDate(receipt.time).toISOString(),
+            }
+            Object.assign(buyOrder, updatedBuyOrder)
+
+
+            if (isBuyOrderClosed) {
+                await ctx.store.remove(ActiveBuyOrder, log.base_buy_order_id)
+                activeBuyOrders.delete(log.base_buy_order_id)
             } else {
-                if (order.orderType == OrderType.Buy) {
-                    let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, order.id))
-                    Object.assign(buyOrder, update)
-                } else if (order.orderType == OrderType.Sell) {
-                    let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, order.id))
-                    Object.assign(sellOrder, update)
-                }
+                let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
+                Object.assign(buyOrder, updatedBuyOrder)
             }
+
+            if (isSellOrderClosed) {
+                await ctx.store.remove(ActiveSellOrder, log.base_sell_order_id)
+                activeSellOrders.delete(log.base_sell_order_id)
+            } else {
+                let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
+                Object.assign(sellOrder, updatedSellOrder)
+            }
+
+            const buyerBalanceId = getHash(`${BASE_ASSET}-${getIdentity(log.order_buyer)}`)
+            let buyerBalance = await lookupBalance(ctx.store, balances, buyerBalanceId)
+            if (!buyerBalance) {
+                buyerBalance = new Balance({
+                    id: buyerBalanceId,
+                    user: getIdentity(log.order_buyer),
+                    asset: BASE_ASSET,
+                    amount: 0n,
+                    timestamp: tai64ToDate(receipt.time).toISOString(),
+                });
+            }
+
+            buyerBalance.amount += BigInt(log.trade_size.toString());
+            balances.set(buyerBalance.id, buyerBalance);
+
+
+            const sellerBalanceId = getHash(`${QUOTE_ASSET}-${getIdentity(log.order_seller)}`)
+            let sellerBalance = await lookupBalance(ctx.store, balances, sellerBalanceId)
+
+            if (!sellerBalance) {
+                sellerBalance = new Balance({
+                    id: sellerBalanceId,
+                    user: getIdentity(log.order_seller),
+                    asset: QUOTE_ASSET,
+                    amount: 0n,
+                    timestamp: tai64ToDate(receipt.time).toISOString(),
+                });
+            }
+
+            sellerBalance.amount += (BigInt(log.trade_size.toString()) * BigInt(log.trade_price.toString()) * BigInt(QUOTE_DECIMAL)) / (BigInt(PRICE_DECIMAL) * BigInt(BASE_DECIMAL));
+            balances.set(sellerBalance.id, sellerBalance);
+
 
         } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, OrderbookAbi__factory.abi)) {
             let event = new CancelOrderEvent({
                 id: receipt.receiptId,
                 orderId: log.order_id,
+                user: getIdentity(log.user),
                 txId: receipt.txId,
                 timestamp: tai64ToDate(receipt.time).toISOString(),
             })
@@ -232,16 +300,74 @@ run(dataSource, database, async (ctx) => {
                 activeSellOrders.delete(order.id)
             }
 
+
+
+            
+
+        } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
+            let event = new DepositEvent({
+                id: receipt.receiptId,
+                txId: receipt.txId,
+                amount: BigInt(log.amount.toString()),
+                asset: log.asset.bits,
+                user: getIdentity(log.user),
+                timestamp: tai64ToDate(receipt.time).toISOString(),
+            })
+            depositEvents.set(event.id, event)
+
+            const asset = log.asset.bits;
+            const isBaseAsset = asset === BASE_ASSET;
+
+            const balanceId = isBaseAsset
+                ? getHash(`${BASE_ASSET}-${getIdentity(log.user)}`)
+                : getHash(`${QUOTE_ASSET}-${getIdentity(log.user)}`);
+
+            let balance = await lookupBalance(ctx.store, balances, balanceId)
+            if (balance) {
+                balance.amount += BigInt(log.amount.toString())
+            } else {
+                balance = new Balance({
+                    id: balanceId,
+                    amount: BigInt(log.amount.toString()),
+                    asset: log.asset.bits,
+                    user: getIdentity(log.user),
+                    timestamp: tai64ToDate(receipt.time).toISOString(),
+                })
+                balances.set(balance.id, balance)
+            }
+        } else if (isEvent<WithdrawEventOutput>('WithdrawEvent', log, OrderbookAbi__factory.abi)) {
+            let event = new WithdrawEvent({
+                id: receipt.receiptId,
+                txId: receipt.txId,
+                amount: BigInt(log.amount.toString()),
+                asset: log.asset.bits,
+                user: getIdentity(log.user),
+                timestamp: tai64ToDate(receipt.time).toISOString()
+            })
+            withdrawEvents.set(event.id, event)
+
+            const asset = log.asset.bits;
+            const isBaseAsset = asset === BASE_ASSET;
+
+            const balanceId = isBaseAsset
+                ? getHash(`${BASE_ASSET}-${getIdentity(log.user)}`)
+                : getHash(`${QUOTE_ASSET}-${getIdentity(log.user)}`);
+
+            let balance = assertNotNull(await lookupBalance(ctx.store, balances, balanceId))
+            balance.amount -= BigInt(log.amount.toString())
         }
     }
 
+
+    await ctx.store.upsert([...balances.values()])
     await ctx.store.upsert([...orders.values()])
     await ctx.store.upsert([...activeBuyOrders.values()])
     await ctx.store.upsert([...activeSellOrders.values()])
     await ctx.store.save([...tradeOrderEvents.values()])
     await ctx.store.save([...openOrderEvents.values()])
-    await ctx.store.save([...matchOrderEvents.values()])
     await ctx.store.save([...cancelOrderEvents.values()])
+    await ctx.store.save([...depositEvents.values()])
+    await ctx.store.save([...withdrawEvents.values()])
 })
 
 
@@ -283,4 +409,15 @@ async function lookupSellOrder(store: Store, orders: Map<string, ActiveBuyOrder>
 
 function getIdentity(output: IdentityOutput): string {
     return assertNotNull(output.Address?.bits || output.ContractId?.bits)
+}
+
+async function lookupBalance(store: Store, balances: Map<string, Balance>, id: string) {
+    let balance = balances.get(id)
+    if (!balance) {
+        balance = await store.get(Balance, id)
+        if (balance) {
+            balances.set(id, balance)
+        }
+    }
+    return balance
 }

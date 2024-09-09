@@ -14,6 +14,9 @@ export class CancelOrderEvent {
     orderId!: string
 
     @StringColumn_({nullable: false})
+    user!: string
+
+    @StringColumn_({nullable: false})
     txId!: string
 
     @StringColumn_({nullable: false})

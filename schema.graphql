@@ -60,30 +60,46 @@ type ActiveBuyOrder @entity {
 type CancelOrderEvent @entity {
   id: ID!
   orderId: String! @index
+  user: String!
   txId: String!
-  timestamp: String!
-}
-
-type MatchOrderEvent @entity {
-  id: ID!
-  orderId: String! @index
-  txId: String!
-  asset: String!
-  orderMatcher: String!
-  owner: String!
-  counterparty: String!
-  matchSize: BigInt!
-  matchPrice: BigInt!
   timestamp: String!
 }
 
 type TradeOrderEvent @entity {
   id: ID!
-  baseSellOrderId: String! @index
-  baseBuyOrderId: String! @index
+  sellOrderId: String! @index
+  buyOrderId: String! @index
   txId: String! @index
   orderMatcher: String! @index
   tradeSize: BigInt! @index
   tradePrice: BigInt! @index
+  seller: String!
+  buyer: String!
+  timestamp: String!
+}
+
+type DepositEvent @entity {
+  id: ID!
+  txId: String! @index
+  amount: BigInt!
+  asset: String! @index
+  user: String! @index
+  timestamp: String!
+}
+
+type WithdrawEvent @entity {
+  id: ID!
+  txId: String! @index
+  amount: BigInt!
+  asset: String! @index
+  user: String! @index
+  timestamp: String!
+}
+
+type Balance @entity {
+  id: ID!
+  amount: BigInt!
+  asset: String! @index
+  user: String! @index
   timestamp: String!
 }
