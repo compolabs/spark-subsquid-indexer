@@ -295,14 +295,42 @@ run(dataSource, database, async (ctx) => {
             if (order.orderType == OrderType.Buy) {
                 await ctx.store.remove(ActiveBuyOrder, order.id)
                 activeBuyOrders.delete(order.id)
+
+                const quoteBalanceId = getHash(
+                    `${QUOTE_ASSET}-${getIdentity(log.user)}`
+                );
+
+                let quoteBalance = await lookupBalance(ctx.store, balances, quoteBalanceId)
+
+                if (!quoteBalance) {
+                    console.log(
+                        `Cannot find a quote balance; user:${order.user}; asset: ${QUOTE_ASSET}; id: ${quoteBalanceId}`
+                    );
+                    return;
+                }
+                quoteBalance.amount += order.amount * order.price * BigInt(QUOTE_DECIMAL) / BigInt(PRICE_DECIMAL) / BigInt(BASE_DECIMAL);
+                balances.set(quoteBalance.id, quoteBalance);
+
+
             } else if (order.orderType == OrderType.Sell) {
                 await ctx.store.remove(ActiveSellOrder, order.id)
                 activeSellOrders.delete(order.id)
+
+                const baseBalanceId = getHash(
+                    `${BASE_ASSET}-${getIdentity(log.user)}`
+                );
+
+                let baseBalance = await lookupBalance(ctx.store, balances, baseBalanceId)
+
+                if (!baseBalance) {
+                    console.log(
+                        `Cannot find a quote balance; user:${order.user}; asset: ${BASE_ASSET}; id: ${baseBalanceId}`
+                    );
+                    return;
+                }
+                baseBalance.amount += order.amount
+                balances.set(baseBalance.id, baseBalance);
             }
-
-
-
-            
 
         } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
             let event = new DepositEvent({
