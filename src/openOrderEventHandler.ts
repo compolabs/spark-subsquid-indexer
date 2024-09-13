@@ -1,4 +1,4 @@
-import { OpenOrderEventOutput } from './abi/OrderbookAbi';
+import { OpenOrderEventOutput } from './abi/Orderbook';
 import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
 import tai64ToDate, { getIdentity, lookupBalance } from './utils';
 

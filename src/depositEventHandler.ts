@@ -1,4 +1,4 @@
-import { DepositEventOutput } from './abi/OrderbookAbi';
+import { DepositEventOutput } from './abi/Orderbook';
 import { DepositEvent, Balance } from './model';
 import tai64ToDate, { getIdentity, lookupBalance } from './utils';
 

@@ -1,6 +1,1 @@
-export const ORDERBOOK_ID = '0xd657825f4ee50d704740af011bd6885f1939071767de83d931f7482093da2f60'
-export const BASE_ASSET = "0x38e4ca985b22625fff93205e997bfc5cc8453a953da638ad297ca60a9f2600bc";
-export const QUOTE_ASSET = "0x336b7c06352a4b736ff6f688ba6885788b3df16e136e95310ade51aa32dc6f05";
-export const BASE_DECIMAL = 10n ** 8n;
-export const QUOTE_DECIMAL = 10n ** 6n; 
-export const PRICE_DECIMAL = 10n ** 9n; 
+export const ORDERBOOK_ID = '0x2d14da1e2188329fab861a5959841e7a17526fcc48ac0fcb4e1ed5ddbf40613f'

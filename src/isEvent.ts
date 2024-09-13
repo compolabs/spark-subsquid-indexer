@@ -8,8 +8,8 @@ export function getEventFields(
   eventName: string,
   jsonAbi: JsonAbi
 ): string[] | undefined {
-  const jsonAbiEventTypes = jsonAbi.types.find(
-    (jsonAbiType) => jsonAbiType.type === `struct ${eventName}`
+  const jsonAbiEventTypes = jsonAbi.metadataTypes.find(
+    (metadataType) => metadataType.type === `struct ${eventName}`
   );
   return jsonAbiEventTypes?.components?.map(({ name }) => name);
 }

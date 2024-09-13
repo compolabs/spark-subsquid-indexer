@@ -1,5 +1,5 @@
-import { TradeOrderEventOutput } from './abi/OrderbookAbi';
-import { TradeOrderEvent, OrderStatus, Balance, ActiveBuyOrder, ActiveSellOrder } from './model';
+import { TradeOrderEventOutput } from './abi/Orderbook';
+import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 

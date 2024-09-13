@@ -1,13 +1,14 @@
 import { run } from '@subsquid/batch-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
-import { OrderbookAbi__factory } from './abi'
+import { OrderbookFactory } from './abi'
 import {
     TradeOrderEventOutput,
     OpenOrderEventOutput,
     CancelOrderEventOutput,
     DepositEventOutput,
     WithdrawEventOutput,
-} from './abi/OrderbookAbi'
+    Orderbook,
+} from './abi/Orderbook'
 import isEvent from './isEvent'
 import { dataSource, processBlocks } from './dataSource'
 import { handleOpenOrderEvent } from './openOrderEventHandler'
@@ -39,15 +40,15 @@ run(dataSource, database, async (ctx) => {
         let log = logs[idx];
         let receipt = receipts[idx];
 
-        if (isEvent<OpenOrderEventOutput>('OpenOrderEvent', log, OrderbookAbi__factory.abi)) {
+        if (isEvent<OpenOrderEventOutput>('OpenOrderEvent', log, Orderbook.abi)) {
             await handleOpenOrderEvent(log, receipt, openOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, OrderbookAbi__factory.abi)) {
+        } else if (isEvent<TradeOrderEventOutput>('TradeOrderEvent', log, Orderbook.abi)) {
             await handleTradeOrderEvent(log, receipt, tradeOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, OrderbookAbi__factory.abi)) {
+        } else if (isEvent<CancelOrderEventOutput>('CancelOrderEvent', log, Orderbook.abi)) {
             await handleCancelOrderEvent(log, receipt, cancelOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (isEvent<DepositEventOutput>('DepositEvent', log, OrderbookAbi__factory.abi)) {
+        } else if (isEvent<DepositEventOutput>('DepositEvent', log, Orderbook.abi)) {
             await handleDepositEvent(log, receipt, depositEvents, balances, ctx);
-        } else if (isEvent<WithdrawEventOutput>('WithdrawEvent', log, OrderbookAbi__factory.abi)) {
+        } else if (isEvent<WithdrawEventOutput>('WithdrawEvent', log, Orderbook.abi)) {
             await handleWithdrawEvent(log, receipt, withdrawEvents, balances, ctx);
         }
     }

@@ -1,4 +1,4 @@
-import { CancelOrderEventOutput } from './abi/OrderbookAbi';
+import { CancelOrderEventOutput } from './abi/Orderbook';
 import { CancelOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
