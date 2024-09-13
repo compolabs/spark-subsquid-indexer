@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class CancelOrderEvent {
@@ -18,6 +18,12 @@ export class CancelOrderEvent {
 
     @StringColumn_({nullable: false})
     txId!: string
+
+    @BigIntColumn_({nullable: false})
+    baseAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    quoteAmount!: bigint
 
     @StringColumn_({nullable: false})
     timestamp!: string

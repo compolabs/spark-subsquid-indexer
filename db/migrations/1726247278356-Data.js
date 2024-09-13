@@ -1,8 +1,8 @@
-module.exports = class Data1726059400235 {
-    name = 'Data1726059400235'
+module.exports = class Data1726247278356 {
+    name = 'Data1726247278356'
 
     async up(db) {
-        await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "open_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "tx_id" text NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "base_amount" numeric NOT NULL, "quote_amount" numeric NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_b7c1feb45e2863952c194e45734" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_5eeb68ab2e76f093921a971e6f" ON "open_order_event" ("order_id") `)
         await db.query(`CREATE TABLE "order" ("id" character varying NOT NULL, "asset" text NOT NULL, "amount" numeric NOT NULL, "order_type" character varying(4) NOT NULL, "price" numeric NOT NULL, "user" text NOT NULL, "status" character varying(8) NOT NULL, "initial_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_1031171c13130102495201e3e20" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_2239145da1719f2e10682949fe" ON "order" ("asset") `)
@@ -20,25 +20,23 @@ module.exports = class Data1726059400235 {
         await db.query(`CREATE INDEX "IDX_bb944e4e6c9725c942121dba96" ON "active_buy_order" ("order_type") `)
         await db.query(`CREATE INDEX "IDX_39a3776b222d04657a722652f4" ON "active_buy_order" ("price") `)
         await db.query(`CREATE INDEX "IDX_56ff48bcbd16daa5141b045df1" ON "active_buy_order" ("user") `)
-        await db.query(`CREATE TABLE "cancel_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "user" text NOT NULL, "tx_id" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_64af7a03ce1fa8301ad354eea0a" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "cancel_order_event" ("id" character varying NOT NULL, "order_id" text NOT NULL, "user" text NOT NULL, "tx_id" text NOT NULL, "base_amount" numeric NOT NULL, "quote_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_64af7a03ce1fa8301ad354eea0a" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_3ad485c27b06f4c7a3bebe564d" ON "cancel_order_event" ("order_id") `)
-        await db.query(`CREATE TABLE "trade_order_event" ("id" character varying NOT NULL, "sell_order_id" text NOT NULL, "buy_order_id" text NOT NULL, "tx_id" text NOT NULL, "order_matcher" text NOT NULL, "trade_size" numeric NOT NULL, "trade_price" numeric NOT NULL, "seller" text NOT NULL, "buyer" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_957514587f7750abd05821a23a6" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "trade_order_event" ("id" character varying NOT NULL, "sell_order_id" text NOT NULL, "buy_order_id" text NOT NULL, "tx_id" text NOT NULL, "order_matcher" text NOT NULL, "trade_size" numeric NOT NULL, "trade_price" numeric NOT NULL, "seller" text NOT NULL, "buyer" text NOT NULL, "seller_base_amount" numeric NOT NULL, "seller_quote_amount" numeric NOT NULL, "buyer_base_amount" numeric NOT NULL, "buyer_quote_amount" numeric NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_957514587f7750abd05821a23a6" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_f27c5ab95d7ecd395a18714d7a" ON "trade_order_event" ("sell_order_id") `)
         await db.query(`CREATE INDEX "IDX_5406c65fe385e1871127bacd7e" ON "trade_order_event" ("buy_order_id") `)
         await db.query(`CREATE INDEX "IDX_dabd889f7cfc0a57f03a1bdad3" ON "trade_order_event" ("tx_id") `)
         await db.query(`CREATE INDEX "IDX_3f089c1661c2ffcd02316f5234" ON "trade_order_event" ("order_matcher") `)
         await db.query(`CREATE INDEX "IDX_fecc6646e0cf27348538bc72d0" ON "trade_order_event" ("trade_size") `)
         await db.query(`CREATE INDEX "IDX_d95773904f1f40ae100303bc83" ON "trade_order_event" ("trade_price") `)
-        await db.query(`CREATE TABLE "deposit_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_15cf72ceca9f2fd85c11de40a76" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "deposit_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "base_amount" numeric NOT NULL, "quote_amount" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_15cf72ceca9f2fd85c11de40a76" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_f86f01bb7884db7a43775fd071" ON "deposit_event" ("tx_id") `)
-        await db.query(`CREATE INDEX "IDX_49c81b8dd5b849fbfea27ad189" ON "deposit_event" ("asset") `)
         await db.query(`CREATE INDEX "IDX_23b9da36e3ee7233bd42781d4f" ON "deposit_event" ("user") `)
-        await db.query(`CREATE TABLE "withdraw_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c5814f5ca4403b899aac8c6a2bd" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "withdraw_event" ("id" character varying NOT NULL, "tx_id" text NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "base_amount" numeric NOT NULL, "quote_amount" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_c5814f5ca4403b899aac8c6a2bd" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_b2e6d4af9489f1f8e804b4707c" ON "withdraw_event" ("tx_id") `)
         await db.query(`CREATE INDEX "IDX_0fb7f33aa9ef11a288aa54e587" ON "withdraw_event" ("asset") `)
         await db.query(`CREATE INDEX "IDX_1a115c34caacd76cceaafa3fbe" ON "withdraw_event" ("user") `)
-        await db.query(`CREATE TABLE "balance" ("id" character varying NOT NULL, "amount" numeric NOT NULL, "asset" text NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_079dddd31a81672e8143a649ca0" PRIMARY KEY ("id"))`)
-        await db.query(`CREATE INDEX "IDX_a0025894b0915d8a63f97173ce" ON "balance" ("asset") `)
+        await db.query(`CREATE TABLE "balance" ("id" character varying NOT NULL, "base_amount" numeric NOT NULL, "quote_amount" numeric NOT NULL, "user" text NOT NULL, "timestamp" text NOT NULL, CONSTRAINT "PK_079dddd31a81672e8143a649ca0" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_a7473c61c7a2127dee44379985" ON "balance" ("user") `)
     }
 
@@ -72,14 +70,12 @@ module.exports = class Data1726059400235 {
         await db.query(`DROP INDEX "public"."IDX_d95773904f1f40ae100303bc83"`)
         await db.query(`DROP TABLE "deposit_event"`)
         await db.query(`DROP INDEX "public"."IDX_f86f01bb7884db7a43775fd071"`)
-        await db.query(`DROP INDEX "public"."IDX_49c81b8dd5b849fbfea27ad189"`)
         await db.query(`DROP INDEX "public"."IDX_23b9da36e3ee7233bd42781d4f"`)
         await db.query(`DROP TABLE "withdraw_event"`)
         await db.query(`DROP INDEX "public"."IDX_b2e6d4af9489f1f8e804b4707c"`)
         await db.query(`DROP INDEX "public"."IDX_0fb7f33aa9ef11a288aa54e587"`)
         await db.query(`DROP INDEX "public"."IDX_1a115c34caacd76cceaafa3fbe"`)
         await db.query(`DROP TABLE "balance"`)
-        await db.query(`DROP INDEX "public"."IDX_a0025894b0915d8a63f97173ce"`)
         await db.query(`DROP INDEX "public"."IDX_a7473c61c7a2127dee44379985"`)
     }
 }

@@ -16,6 +16,8 @@ type OpenOrderEvent @entity {
   asset: String!
   amount: BigInt!
   orderType: OrderType!
+  baseAmount: BigInt!
+  quoteAmount: BigInt!
   price: BigInt!
   user: String!
   timestamp: String!
@@ -62,6 +64,8 @@ type CancelOrderEvent @entity {
   orderId: String! @index
   user: String!
   txId: String!
+  baseAmount: BigInt!
+  quoteAmount: BigInt!
   timestamp: String!
 }
 
@@ -75,14 +79,20 @@ type TradeOrderEvent @entity {
   tradePrice: BigInt! @index
   seller: String!
   buyer: String!
+  sellerBaseAmount: BigInt!
+  sellerQuoteAmount: BigInt!
+  buyerBaseAmount: BigInt!
+  buyerQuoteAmount: BigInt!
   timestamp: String!
 }
 
 type DepositEvent @entity {
   id: ID!
   txId: String! @index
-  amount: BigInt!
-  asset: String! @index
+  # amount: BigInt!
+  # asset: String! @index
+  baseAmount: BigInt!
+  quoteAmount: BigInt!
   user: String! @index
   timestamp: String!
 }
@@ -92,14 +102,18 @@ type WithdrawEvent @entity {
   txId: String! @index
   amount: BigInt!
   asset: String! @index
+  baseAmount: BigInt!
+  quoteAmount: BigInt! 
   user: String! @index
   timestamp: String!
 }
 
 type Balance @entity {
   id: ID!
-  amount: BigInt!
-  asset: String! @index
+  # amount: BigInt!
+  # asset: String! @index
+  baseAmount: BigInt!
+  quoteAmount: BigInt!
   user: String! @index
   timestamp: String!
 }

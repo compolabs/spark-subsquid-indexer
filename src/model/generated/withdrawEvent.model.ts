@@ -20,6 +20,12 @@ export class WithdrawEvent {
     @StringColumn_({nullable: false})
     asset!: string
 
+    @BigIntColumn_({nullable: false})
+    baseAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    quoteAmount!: bigint
+
     @Index_()
     @StringColumn_({nullable: false})
     user!: string

@@ -1,8 +1,6 @@
 import { TradeOrderEventOutput } from './abi/OrderbookAbi';
 import { TradeOrderEvent, OrderStatus, Balance, ActiveBuyOrder, ActiveSellOrder } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder } from './utils';
-import { getHash } from './utils';
-import { BASE_ASSET, QUOTE_ASSET, BASE_DECIMAL, PRICE_DECIMAL, QUOTE_DECIMAL } from './marketConfig';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
@@ -14,6 +12,10 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   tradePrice: BigInt(log.trade_price.toString()),
   orderMatcher: getIdentity(log.order_matcher),
   seller: getIdentity(log.order_seller),
+  sellerBaseAmount: BigInt(log.s_account_liquid_base.toString()),
+  sellerQuoteAmount: BigInt(log.s_account_liquid_quote.toString()),
+  buyerBaseAmount: BigInt(log.b_account_liquid_base.toString()),
+  buyerQuoteAmount: BigInt(log.b_account_liquid_quote.toString()),
   buyer: getIdentity(log.order_buyer),
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
@@ -61,35 +63,28 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   Object.assign(sellOrder, updatedSellOrder)
  }
 
- const buyerBalanceId = getHash(`${BASE_ASSET}-${getIdentity(log.order_buyer)}`)
- let buyerBalance = await lookupBalance(ctx.store, balances, buyerBalanceId)
- if (!buyerBalance) {
-  buyerBalance = new Balance({
-   id: buyerBalanceId,
-   user: getIdentity(log.order_buyer),
-   asset: BASE_ASSET,
-   amount: 0n,
-   timestamp: tai64ToDate(receipt.time).toISOString(),
-  });
+ let seller_balance = await lookupBalance(ctx.store, balances, getIdentity(log.order_seller))
+ let buyer_balance = await lookupBalance(ctx.store, balances, getIdentity(log.order_buyer))
+
+ if (!seller_balance || !buyer_balance) {
+  return;
  }
 
- buyerBalance.amount += BigInt(log.trade_size.toString());
- balances.set(buyerBalance.id, buyerBalance);
+ const updatedSellerBalance = {
+  ...seller_balance,
+  base_amount: BigInt(log.s_account_liquid_base.toString()),
+  quote_amount: BigInt(log.s_account_liquid_quote.toString()),
+  timestamp: tai64ToDate(receipt.time).toISOString(),
+ };
 
+ balances.set(seller_balance.id, updatedSellerBalance);
 
- const sellerBalanceId = getHash(`${QUOTE_ASSET}-${getIdentity(log.order_seller)}`)
- let sellerBalance = await lookupBalance(ctx.store, balances, sellerBalanceId)
+ const updatedBuyerBalance = {
+  ...buyer_balance,
+  base_amount: BigInt(log.b_account_liquid_base.toString()),
+  quote_amount: BigInt(log.b_account_liquid_quote.toString()),
+  timestamp: tai64ToDate(receipt.time).toISOString(),
+ };
 
- if (!sellerBalance) {
-  sellerBalance = new Balance({
-   id: sellerBalanceId,
-   user: getIdentity(log.order_seller),
-   asset: QUOTE_ASSET,
-   amount: 0n,
-   timestamp: tai64ToDate(receipt.time).toISOString(),
-  });
- }
-
- sellerBalance.amount += (BigInt(log.trade_size.toString()) * BigInt(log.trade_price.toString()) * BigInt(QUOTE_DECIMAL)) / (BigInt(PRICE_DECIMAL) * BigInt(BASE_DECIMAL));
- balances.set(sellerBalance.id, sellerBalance);
+ balances.set(buyer_balance.id, updatedBuyerBalance);
 }

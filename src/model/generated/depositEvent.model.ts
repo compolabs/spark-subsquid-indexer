@@ -14,11 +14,10 @@ export class DepositEvent {
     txId!: string
 
     @BigIntColumn_({nullable: false})
-    amount!: bigint
+    baseAmount!: bigint
 
-    @Index_()
-    @StringColumn_({nullable: false})
-    asset!: string
+    @BigIntColumn_({nullable: false})
+    quoteAmount!: bigint
 
     @Index_()
     @StringColumn_({nullable: false})

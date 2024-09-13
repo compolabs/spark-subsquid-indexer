@@ -39,6 +39,18 @@ export class TradeOrderEvent {
     @StringColumn_({nullable: false})
     buyer!: string
 
+    @BigIntColumn_({nullable: false})
+    sellerBaseAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    sellerQuoteAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    buyerBaseAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    buyerQuoteAmount!: bigint
+
     @StringColumn_({nullable: false})
     timestamp!: string
 }

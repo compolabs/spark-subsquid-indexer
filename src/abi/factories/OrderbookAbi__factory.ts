@@ -28,12 +28,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -62,12 +62,12 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -84,22 +84,22 @@ const _abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -116,7 +116,7 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         },
         {
@@ -126,7 +126,7 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         },
         {
@@ -136,12 +136,12 @@ const _abi = {
         },
         {
           "name": "__tuple_element",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         },
         {
           "name": "__tuple_element",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         }
       ],
@@ -506,12 +506,12 @@ const _abi = {
       "components": [
         {
           "name": "base",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "quote",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -529,6 +529,16 @@ const _abi = {
         {
           "name": "user",
           "type": 12,
+          "typeArguments": null
+        },
+        {
+          "name": "liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "liquid_quote",
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -552,7 +562,7 @@ const _abi = {
       "components": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -564,59 +574,27 @@ const _abi = {
           "name": "user",
           "type": 12,
           "typeArguments": null
+        },
+        {
+          "name": "liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "liquid_quote",
+          "type": 42,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
       "typeId": 30,
-      "type": "struct MatchOrderEvent",
-      "components": [
-        {
-          "name": "order_id",
-          "type": 6,
-          "typeArguments": null
-        },
-        {
-          "name": "asset",
-          "type": 25,
-          "typeArguments": null
-        },
-        {
-          "name": "order_matcher",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "owner",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "counterparty",
-          "type": 12,
-          "typeArguments": null
-        },
-        {
-          "name": "match_size",
-          "type": 43,
-          "typeArguments": null
-        },
-        {
-          "name": "match_price",
-          "type": 43,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 31,
       "type": "struct OpenOrderEvent",
       "components": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -636,24 +614,34 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "user",
           "type": 12,
           "typeArguments": null
+        },
+        {
+          "name": "liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "liquid_quote",
+          "type": 42,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 32,
+      "typeId": 31,
       "type": "struct Order",
       "components": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -673,39 +661,39 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 43,
-          "typeArguments": null
-        },
-        {
-          "name": "block_height",
           "type": 42,
           "typeArguments": null
         },
         {
+          "name": "block_height",
+          "type": 41,
+          "typeArguments": null
+        },
+        {
           "name": "order_height",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "matcher_fee",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "protocol_maker_fee",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "protocol_taker_fee",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 33,
+      "typeId": 32,
       "type": "struct OrderChangeInfo",
       "components": [
         {
@@ -715,7 +703,7 @@ const _abi = {
         },
         {
           "name": "block_height",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         },
         {
@@ -730,12 +718,34 @@ const _abi = {
         },
         {
           "name": "amount_before",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "amount_after",
-          "type": 43,
+          "type": 42,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 33,
+      "type": "struct ProtocolFee",
+      "components": [
+        {
+          "name": "maker_fee",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "taker_fee",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "volume_threshold",
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -743,28 +753,6 @@ const _abi = {
     },
     {
       "typeId": 34,
-      "type": "struct ProtocolFee",
-      "components": [
-        {
-          "name": "maker_fee",
-          "type": 43,
-          "typeArguments": null
-        },
-        {
-          "name": "taker_fee",
-          "type": 43,
-          "typeArguments": null
-        },
-        {
-          "name": "volume_threshold",
-          "type": 43,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 35,
       "type": "struct RawVec",
       "components": [
         {
@@ -774,7 +762,7 @@ const _abi = {
         },
         {
           "name": "cap",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -783,17 +771,29 @@ const _abi = {
       ]
     },
     {
-      "typeId": 36,
+      "typeId": 35,
       "type": "struct SetEpochEvent",
       "components": [
         {
           "name": "epoch",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "epoch_duration",
-          "type": 43,
+          "type": 42,
+          "typeArguments": null
+        }
+      ],
+      "typeParameters": null
+    },
+    {
+      "typeId": 36,
+      "type": "struct SetMatcherRewardEvent",
+      "components": [
+        {
+          "name": "amount",
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -801,27 +801,15 @@ const _abi = {
     },
     {
       "typeId": 37,
-      "type": "struct SetMatcherRewardEvent",
-      "components": [
-        {
-          "name": "amount",
-          "type": 43,
-          "typeArguments": null
-        }
-      ],
-      "typeParameters": null
-    },
-    {
-      "typeId": 38,
       "type": "struct SetProtocolFeeEvent",
       "components": [
         {
           "name": "protocol_fee",
-          "type": 40,
+          "type": 39,
           "typeArguments": [
             {
               "name": "",
-              "type": 34,
+              "type": 33,
               "typeArguments": null
             }
           ]
@@ -830,7 +818,7 @@ const _abi = {
       "typeParameters": null
     },
     {
-      "typeId": 39,
+      "typeId": 38,
       "type": "struct TradeOrderEvent",
       "components": [
         {
@@ -860,17 +848,17 @@ const _abi = {
         },
         {
           "name": "trade_size",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "trade_price",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "block_height",
-          "type": 42,
+          "type": 41,
           "typeArguments": null
         },
         {
@@ -887,17 +875,37 @@ const _abi = {
           "name": "order_buyer",
           "type": 12,
           "typeArguments": null
+        },
+        {
+          "name": "s_account_liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "s_account_liquid_quote",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "b_account_liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "b_account_liquid_quote",
+          "type": 42,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 40,
+      "typeId": 39,
       "type": "struct Vec",
       "components": [
         {
           "name": "buf",
-          "type": 35,
+          "type": 34,
           "typeArguments": [
             {
               "name": "",
@@ -908,7 +916,7 @@ const _abi = {
         },
         {
           "name": "len",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -917,12 +925,12 @@ const _abi = {
       ]
     },
     {
-      "typeId": 41,
+      "typeId": 40,
       "type": "struct WithdrawEvent",
       "components": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -934,18 +942,28 @@ const _abi = {
           "name": "user",
           "type": 12,
           "typeArguments": null
+        },
+        {
+          "name": "liquid_base",
+          "type": 42,
+          "typeArguments": null
+        },
+        {
+          "name": "liquid_quote",
+          "type": 42,
+          "typeArguments": null
         }
       ],
       "typeParameters": null
     },
     {
-      "typeId": 42,
+      "typeId": 41,
       "type": "u32",
       "components": null,
       "typeParameters": null
     },
     {
-      "typeId": 43,
+      "typeId": 42,
       "type": "u64",
       "components": null,
       "typeParameters": null
@@ -1018,7 +1036,7 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " @param None - The function doesnt take any input parameters; it uses context information."
+            " @param None - The function doesn't take any input parameters; it uses context information."
           ]
         },
         {
@@ -1044,7 +1062,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -1059,17 +1077,17 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "slippage",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "orders",
-          "type": 40,
+          "type": 39,
           "typeArguments": [
             {
               "name": "",
@@ -1107,19 +1125,19 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            "      - GTC (Good-Til-Canceled): The order remains active until it is either fully filled or canceled."
+            "      - 'GTC' (Good-Til-Canceled): The order remains active until it is either fully filled or canceled."
           ]
         },
         {
           "name": "doc-comment",
           "arguments": [
-            "      - IOC (Immediate-Or-Cancel): The order can be partially filled immediately, and any unfilled portion is canceled."
+            "      - 'IOC' (Immediate-Or-Cancel): The order can be partially filled immediately, and any unfilled portion is canceled."
           ]
         },
         {
           "name": "doc-comment",
           "arguments": [
-            "      - FOK (Fill-Or-Kill): The order must be fully filled immediately, or the entire transaction fails."
+            "      - 'FOK' (Fill-Or-Kill): The order must be fully filled immediately, or the entire transaction fails."
           ]
         },
         {
@@ -1137,7 +1155,7 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " @param limit_type The limit type for the new order: GTC, IOC, or FOK."
+            " @param limit_type The limit type for the new order: 'GTC', 'IOC', or 'FOK'."
           ]
         },
         {
@@ -1161,7 +1179,7 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " @return b256 The unique identifier of the newly created order. If the order is partially matched and canceled (in the case of IOC), the ID corresponds to the canceled order."
+            " @return b256 The unique identifier of the newly created order. If the order is partially matched and canceled (in the case of 'IOC'), the ID corresponds to the canceled order."
           ]
         },
         {
@@ -1181,7 +1199,7 @@ const _abi = {
       "inputs": [
         {
           "name": "orders",
-          "type": 40,
+          "type": 39,
           "typeArguments": [
             {
               "name": "",
@@ -1282,7 +1300,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -1292,7 +1310,7 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -1346,12 +1364,12 @@ const _abi = {
       "inputs": [
         {
           "name": "epoch",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
           "name": "epoch_duration",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -1416,7 +1434,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -1476,11 +1494,11 @@ const _abi = {
       "inputs": [
         {
           "name": "protocol_fee",
-          "type": 40,
+          "type": 39,
           "typeArguments": [
             {
               "name": "",
-              "type": 34,
+              "type": 33,
               "typeArguments": null
             }
           ]
@@ -1520,7 +1538,7 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " @param protocol_fee A vector of ProtocolFee structures that define the fee rates and their corresponding volume thresholds."
+            " @param protocol_fee A vector of 'ProtocolFee' structures that define the fee rates and their corresponding volume thresholds."
           ]
         },
         {
@@ -1547,7 +1565,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -1566,7 +1584,7 @@ const _abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " @notice Withdraws a specified amount of a given asset from the callers account."
+            " @notice Withdraws a specified amount of a given asset from the caller's account."
           ]
         },
         {
@@ -1651,7 +1669,7 @@ const _abi = {
       "name": "matcher_fee",
       "output": {
         "name": "",
-        "type": 43,
+        "type": 42,
         "typeArguments": null
       },
       "attributes": [
@@ -1678,7 +1696,7 @@ const _abi = {
         "typeArguments": [
           {
             "name": "",
-            "type": 32,
+            "type": 31,
             "typeArguments": null
           }
         ]
@@ -1703,11 +1721,11 @@ const _abi = {
       "name": "order_change_info",
       "output": {
         "name": "",
-        "type": 40,
+        "type": 39,
         "typeArguments": [
           {
             "name": "",
-            "type": 33,
+            "type": 32,
             "typeArguments": null
           }
         ]
@@ -1735,17 +1753,17 @@ const _abi = {
         },
         {
           "name": "price",
-          "type": 43,
-          "typeArguments": null
-        },
-        {
-          "name": "block_height",
           "type": 42,
           "typeArguments": null
         },
         {
+          "name": "block_height",
+          "type": 41,
+          "typeArguments": null
+        },
+        {
           "name": "order_height",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         }
       ],
@@ -1762,11 +1780,11 @@ const _abi = {
       "name": "protocol_fee",
       "output": {
         "name": "",
-        "type": 40,
+        "type": 39,
         "typeArguments": [
           {
             "name": "",
-            "type": 34,
+            "type": 33,
             "typeArguments": null
           }
         ]
@@ -1807,7 +1825,7 @@ const _abi = {
       "inputs": [
         {
           "name": "amount",
-          "type": 43,
+          "type": 42,
           "typeArguments": null
         },
         {
@@ -1842,7 +1860,7 @@ const _abi = {
       "name": "user_orders",
       "output": {
         "name": "",
-        "type": 40,
+        "type": 39,
         "typeArguments": [
           {
             "name": "",
@@ -1930,23 +1948,7 @@ const _abi = {
       "logId": "7812135309850120461",
       "loggedType": {
         "name": "",
-        "type": 31,
-        "typeArguments": []
-      }
-    },
-    {
-      "logId": "2271581833574730066",
-      "loggedType": {
-        "name": "",
         "type": 30,
-        "typeArguments": []
-      }
-    },
-    {
-      "logId": "18305104039093136274",
-      "loggedType": {
-        "name": "",
-        "type": 39,
         "typeArguments": []
       }
     },
@@ -1954,7 +1956,15 @@ const _abi = {
       "logId": "5744192922338635869",
       "loggedType": {
         "name": "",
-        "type": 36,
+        "type": 35,
+        "typeArguments": []
+      }
+    },
+    {
+      "logId": "18305104039093136274",
+      "loggedType": {
+        "name": "",
+        "type": 38,
         "typeArguments": []
       }
     },
@@ -1970,7 +1980,7 @@ const _abi = {
       "logId": "649664855397936830",
       "loggedType": {
         "name": "",
-        "type": 37,
+        "type": 36,
         "typeArguments": []
       }
     },
@@ -1978,7 +1988,7 @@ const _abi = {
       "logId": "10772010129570911307",
       "loggedType": {
         "name": "",
-        "type": 38,
+        "type": 37,
         "typeArguments": []
       }
     },
@@ -1986,7 +1996,7 @@ const _abi = {
       "logId": "10918704871079408520",
       "loggedType": {
         "name": "",
-        "type": 41,
+        "type": 40,
         "typeArguments": []
       }
     }
@@ -2000,16 +2010,16 @@ const _abi = {
         "type": 25,
         "typeArguments": []
       },
-      "offset": 81368
+      "offset": 81672
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 42,
+        "type": 41,
         "typeArguments": null
       },
-      "offset": 81400
+      "offset": 81704
     },
     {
       "name": "QUOTE_ASSET",
@@ -2018,16 +2028,16 @@ const _abi = {
         "type": 25,
         "typeArguments": []
       },
-      "offset": 81456
+      "offset": 81760
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 42,
+        "type": 41,
         "typeArguments": null
       },
-      "offset": 81488
+      "offset": 81792
     },
     {
       "name": "OWNER",
@@ -2036,25 +2046,25 @@ const _abi = {
         "type": 12,
         "typeArguments": []
       },
-      "offset": 81408
+      "offset": 81712
     },
     {
       "name": "PRICE_DECIMALS",
       "configurableType": {
         "name": "",
-        "type": 42,
+        "type": 41,
         "typeArguments": null
       },
-      "offset": 81448
+      "offset": 81752
     },
     {
       "name": "VERSION",
       "configurableType": {
         "name": "",
-        "type": 42,
+        "type": 41,
         "typeArguments": null
       },
-      "offset": 81496
+      "offset": 81800
     }
   ]
 };

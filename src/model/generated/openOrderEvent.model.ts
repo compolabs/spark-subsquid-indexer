@@ -27,6 +27,12 @@ export class OpenOrderEvent {
     orderType!: OrderType
 
     @BigIntColumn_({nullable: false})
+    baseAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
+    quoteAmount!: bigint
+
+    @BigIntColumn_({nullable: false})
     price!: bigint
 
     @StringColumn_({nullable: false})
