@@ -1,4 +1,4 @@
-import { Contract, JsonAbi } from "fuels";
+import { JsonAbi } from "fuels";
 
 const isEvent = <T>(eventName: string, object: any, abi: JsonAbi): object is T =>
   checkFieldsInObject(object, getEventFields(eventName, abi)!);
@@ -9,7 +9,7 @@ export function getEventFields(
   jsonAbi: JsonAbi
 ): string[] | undefined {
   const jsonAbiEventTypes = jsonAbi.metadataTypes.find(
-    (metadataType) => metadataType.type === `struct ${eventName}`
+    (metadataType) => metadataType.type === `struct events::${eventName}`
   );
   return jsonAbiEventTypes?.components?.map(({ name }) => name);
 }
