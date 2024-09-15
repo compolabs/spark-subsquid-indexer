@@ -10,15 +10,15 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   buyOrderId: log.base_buy_order_id,
   tradeSize: BigInt(log.trade_size.toString()),
   tradePrice: BigInt(log.trade_price.toString()),
-  orderMatcher: getIdentity(log.order_matcher),
   seller: getIdentity(log.order_seller),
+  buyer: getIdentity(log.order_buyer),
   sellerBaseAmount: BigInt(log.s_account_liquid_base.toString()),
   sellerQuoteAmount: BigInt(log.s_account_liquid_quote.toString()),
   buyerBaseAmount: BigInt(log.b_account_liquid_base.toString()),
   buyerQuoteAmount: BigInt(log.b_account_liquid_quote.toString()),
-  buyer: getIdentity(log.order_buyer),
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
+  // orderMatcher: getIdentity(log.order_matcher),
  })
  tradeOrderEvents.set(event.id, event)
 

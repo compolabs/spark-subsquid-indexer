@@ -5,12 +5,12 @@ import tai64ToDate, { getIdentity, lookupBalance } from './utils';
 export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
  let event = new WithdrawEvent({
   id: receipt.receiptId,
-  txId: receipt.txId,
+  user: getIdentity(log.user),
   amount: BigInt(log.amount.toString()),
-  asset: log.asset.bits,
   baseAmount: BigInt(log.liquid_base.toString()),
   quoteAmount: BigInt(log.liquid_quote.toString()),
-  user: getIdentity(log.user),
+  asset: log.asset.bits,
+  txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString()
  })
  withdrawEvents.set(event.id, event)

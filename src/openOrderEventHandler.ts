@@ -6,15 +6,15 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
  let event = new OpenOrderEvent({
   id: receipt.receiptId,
   orderId: log.order_id,
-  txId: receipt.txId,
-  asset: log.asset.bits,
-  amount: BigInt(log.amount.toString()),
   orderType: log.order_type as unknown as OrderType,
+  user: getIdentity(log.user),
+  amount: BigInt(log.amount.toString()),
+  price: BigInt(log.price.toString()),
   baseAmount: BigInt(log.liquid_base.toString()),
   quoteAmount: BigInt(log.liquid_quote.toString()),
-  price: BigInt(log.price.toString()),
-  user: getIdentity(log.user),
+  txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
+  // asset: log.asset.bits,
  })
  openOrderEvents.set(event.id, event)
 

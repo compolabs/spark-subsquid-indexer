@@ -12,20 +12,19 @@ enum OrderStatus {
 type OpenOrderEvent @entity {
   id: ID!
   orderId: String! @index
-  txId: String!
-  asset: String!
+  orderType: OrderType! @index
+  user: String! @index
   amount: BigInt!
-  orderType: OrderType!
+  price: BigInt!
   baseAmount: BigInt!
   quoteAmount: BigInt!
-  price: BigInt!
-  user: String!
+  txId: String!
   timestamp: String!
+  # asset: String!
 }
 
 type Order @entity {
   id: ID!
-  asset: String! @index
   amount: BigInt!
   orderType: OrderType! @index
   price: BigInt! @index
@@ -33,39 +32,40 @@ type Order @entity {
   status: OrderStatus! @index
   initialAmount: BigInt!
   timestamp: String!
+  # asset: String! @index
 }
 
 type ActiveSellOrder @entity {
   id: ID!
-  asset: String! @index
   amount: BigInt!
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
-  status: OrderStatus!
+  status: OrderStatus! @index
   initialAmount: BigInt!
   timestamp: String!
+  # asset: String! @index
 }
 
 type ActiveBuyOrder @entity {
-  id: ID!
-  asset: String! @index
+  id: ID! 
   amount: BigInt!
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
-  status: OrderStatus!
+  status: OrderStatus! @index
   initialAmount: BigInt!
   timestamp: String!
+  # asset: String! @index
 }
 
 type CancelOrderEvent @entity {
   id: ID!
   orderId: String! @index
-  user: String!
-  txId: String!
+  user: String! @index
   baseAmount: BigInt!
   quoteAmount: BigInt!
+  txId: String!
   timestamp: String!
 }
 
@@ -73,43 +73,45 @@ type TradeOrderEvent @entity {
   id: ID!
   sellOrderId: String! @index
   buyOrderId: String! @index
-  txId: String! @index
-  orderMatcher: String! @index
   tradeSize: BigInt! @index
   tradePrice: BigInt! @index
-  seller: String!
-  buyer: String!
+  seller: String! @index
+  buyer: String! @index
   sellerBaseAmount: BigInt!
   sellerQuoteAmount: BigInt!
   buyerBaseAmount: BigInt!
   buyerQuoteAmount: BigInt!
+  txId: String! @index
   timestamp: String!
+  # orderMatcher: String! @index
 }
 
 type DepositEvent @entity {
   id: ID!
-  txId: String! @index
-  baseAmount: BigInt!
-  quoteAmount: BigInt!
   user: String! @index
+  amount: BigInt! @index
+  baseAmount: BigInt! 
+  quoteAmount: BigInt!
+  asset: String! @index
+  txId: String!
   timestamp: String!
 }
 
 type WithdrawEvent @entity {
   id: ID!
-  txId: String! @index
-  amount: BigInt!
-  asset: String! @index
-  baseAmount: BigInt!
-  quoteAmount: BigInt! 
   user: String! @index
+  amount: BigInt! @index
+  baseAmount: BigInt! 
+  quoteAmount: BigInt! 
+  asset: String! @index
+  txId: String!
   timestamp: String!
 }
 
 type Balance @entity {
   id: ID!
-  baseAmount: BigInt!
-  quoteAmount: BigInt!
   user: String! @index
+  baseAmount: BigInt! @index
+  quoteAmount: BigInt! @index
   timestamp: String!
 }
