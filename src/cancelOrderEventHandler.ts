@@ -35,12 +35,9 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
   return
  }
 
- const updatedBalance = {
-  ...balance,
-  base_amount: BigInt(log.liquid_base.toString()),
-  quote_amount: BigInt(log.liquid_quote.toString()),
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- };
+ balance.baseAmount = BigInt(log.liquid_base.toString());
+ balance.quoteAmount = BigInt(log.liquid_quote.toString());
+ balance.timestamp = tai64ToDate(receipt.time).toISOString();
 
- balances.set(balance.id, updatedBalance);
+ balances.set(balance.id, balance);
 }

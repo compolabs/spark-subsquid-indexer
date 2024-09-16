@@ -70,21 +70,15 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   return;
  }
 
- const updatedSellerBalance = {
-  ...seller_balance,
-  base_amount: BigInt(log.s_account_liquid_base.toString()),
-  quote_amount: BigInt(log.s_account_liquid_quote.toString()),
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- };
+ seller_balance.baseAmount = BigInt(log.s_account_liquid_base.toString());
+ seller_balance.quoteAmount = BigInt(log.s_account_liquid_quote.toString());
+ seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
 
- balances.set(seller_balance.id, updatedSellerBalance);
+ balances.set(seller_balance.id, seller_balance);
 
- const updatedBuyerBalance = {
-  ...buyer_balance,
-  base_amount: BigInt(log.b_account_liquid_base.toString()),
-  quote_amount: BigInt(log.b_account_liquid_quote.toString()),
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- };
+ buyer_balance.baseAmount = BigInt(log.b_account_liquid_base.toString());
+ buyer_balance.quoteAmount = BigInt(log.b_account_liquid_quote.toString());
+ buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
 
- balances.set(buyer_balance.id, updatedBuyerBalance);
+ balances.set(buyer_balance.id, buyer_balance);
 }
