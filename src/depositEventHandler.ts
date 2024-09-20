@@ -7,8 +7,8 @@ export async function handleDepositEvent(log: DepositEventOutput, receipt: any, 
   id: receipt.receiptId,
   user: getIdentity(log.user),
   amount: BigInt(log.amount.toString()),
-  baseAmount: BigInt(log.liquid_base.toString()),
-  quoteAmount: BigInt(log.liquid_quote.toString()),
+  baseAmount: BigInt(log.balance.liquid.base.toString()),
+  quoteAmount: BigInt(log.balance.liquid.quote.toString()),
   asset: log.asset.bits,
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
@@ -24,8 +24,8 @@ export async function handleDepositEvent(log: DepositEventOutput, receipt: any, 
   });
 
  } else {
-  balance.baseAmount = BigInt(log.liquid_base.toString());
-  balance.quoteAmount = BigInt(log.liquid_quote.toString());
+  balance.baseAmount = BigInt(log.balance.liquid.base.toString());
+  balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
  }
  balances.set(balance.id, balance);

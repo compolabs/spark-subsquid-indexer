@@ -10,8 +10,8 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   user: getIdentity(log.user),
   amount: BigInt(log.amount.toString()),
   price: BigInt(log.price.toString()),
-  baseAmount: BigInt(log.liquid_base.toString()),
-  quoteAmount: BigInt(log.liquid_quote.toString()),
+  baseAmount: BigInt(log.balance.liquid.base.toString()),
+  quoteAmount: BigInt(log.balance.liquid.quote.toString()),
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
   // asset: log.asset.bits,
@@ -39,8 +39,8 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
  if (!balance) {
   return
  } else {
-  balance.baseAmount = BigInt(log.liquid_base.toString());
-  balance.quoteAmount = BigInt(log.liquid_quote.toString());
+  balance.baseAmount = BigInt(log.balance.liquid.base.toString());
+  balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
  }
  balances.set(balance.id, balance);

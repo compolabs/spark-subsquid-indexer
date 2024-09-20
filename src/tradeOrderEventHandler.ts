@@ -12,10 +12,10 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   tradePrice: BigInt(log.trade_price.toString()),
   seller: getIdentity(log.order_seller),
   buyer: getIdentity(log.order_buyer),
-  sellerBaseAmount: BigInt(log.s_account_liquid_base.toString()),
-  sellerQuoteAmount: BigInt(log.s_account_liquid_quote.toString()),
-  buyerBaseAmount: BigInt(log.b_account_liquid_base.toString()),
-  buyerQuoteAmount: BigInt(log.b_account_liquid_quote.toString()),
+  sellerBaseAmount: BigInt(log.s_balance.liquid.base.toString()),
+  sellerQuoteAmount: BigInt(log.s_balance.liquid.quote.toString()),
+  buyerBaseAmount: BigInt(log.b_balance.liquid.base.toString()),
+  buyerQuoteAmount: BigInt(log.b_balance.liquid.quote.toString()),
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
   // orderMatcher: getIdentity(log.order_matcher),
@@ -70,14 +70,14 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   return;
  }
 
- seller_balance.baseAmount = BigInt(log.s_account_liquid_base.toString());
- seller_balance.quoteAmount = BigInt(log.s_account_liquid_quote.toString());
+ seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
+ seller_balance.quoteAmount = BigInt(log.s_balance.liquid.quote.toString());
  seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
 
  balances.set(seller_balance.id, seller_balance);
 
- buyer_balance.baseAmount = BigInt(log.b_account_liquid_base.toString());
- buyer_balance.quoteAmount = BigInt(log.b_account_liquid_quote.toString());
+ buyer_balance.baseAmount = BigInt(log.b_balance.liquid.base.toString());
+ buyer_balance.quoteAmount = BigInt(log.b_balance.liquid.quote.toString());
  buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
 
  balances.set(buyer_balance.id, buyer_balance);
