@@ -1,4 +1,4 @@
-import { WithdrawEventOutput } from './abi/Orderbook';
+import { WithdrawEventOutput } from './abi/Market';
 import { WithdrawEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 

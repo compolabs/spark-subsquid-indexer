@@ -1,6 +1,6 @@
 {
-  "name": "fuel-example",
-  "version": "0.4.0",
+  "name": "spark-indexer",
+  "version": "0.5.1",
   "private": true,
   "scripts": {
     "build": "rm -rf lib && tsc"

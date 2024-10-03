@@ -3,7 +3,7 @@ import { MARKETS } from "./marketConfig";
 import { augmentBlock } from "@subsquid/fuel-objects";
 import { BN, getDecodedLogs, ReceiptLogData, ReceiptType } from "fuels";
 import { assertNotNull } from '@subsquid/util-internal'
-import { Orderbook } from './abi'
+import { Market } from './abi'
 
 // First we create a DataSource - component,
 // that defines where to get the data and what data should we get.
@@ -89,6 +89,6 @@ export async function processBlocks(ctx: any) {
   }
  }
 
- let logs: any[] = getDecodedLogs(receipts, Orderbook.abi);
+ let logs: any[] = getDecodedLogs(receipts, Market.abi);
  return { receipts, logs, balances, orders, activeBuyOrders, activeSellOrders, tradeOrderEvents, openOrderEvents, cancelOrderEvents, depositEvents, withdrawEvents };
 }

@@ -1,4 +1,4 @@
-import { OpenOrderEventOutput } from './abi/Orderbook';
+import { OpenOrderEventOutput } from './abi/Market';
 import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'

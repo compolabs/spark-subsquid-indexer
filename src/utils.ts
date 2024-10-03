@@ -2,7 +2,7 @@ import crypto from "crypto";
 import BN from "./BN";
 import { Store } from "@subsquid/typeorm-store";
 import { ActiveBuyOrder, ActiveSellOrder, Balance, Order } from "./model";
-import { IdentityOutput } from "./abi/Orderbook";
+import { IdentityOutput } from "./abi/Market";
 import { assertNotNull } from '@subsquid/util-internal'
 
 export const getHash = (data: string) => {
