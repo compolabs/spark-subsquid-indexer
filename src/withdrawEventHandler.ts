@@ -8,8 +8,8 @@ export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any
   market: receipt.id,
   user: getIdentity(log.user),
   amount: BigInt(log.amount.toString()),
-  baseAmount: BigInt(log.balance.liquid.base.toString()),
-  quoteAmount: BigInt(log.balance.liquid.quote.toString()),
+  baseAmount: BigInt(log.account.liquid.base.toString()),
+  quoteAmount: BigInt(log.account.liquid.quote.toString()),
   asset: log.asset.bits,
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString()
@@ -19,8 +19,8 @@ export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any
  let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
 
  if (balance) {
-  balance.baseAmount = BigInt(log.balance.liquid.base.toString());
-  balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
+  balance.baseAmount = BigInt(log.account.liquid.base.toString());
+  balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(balance.id, balance);
  } else {

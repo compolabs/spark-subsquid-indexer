@@ -17,6 +17,8 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
  cancelOrderEvents.set(event.id, event)
 
  let order = assertNotNull(await lookupOrder(ctx.store, orders, log.order_id))
+ let balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
+
  order.amount = 0n
  order.status = OrderStatus.Canceled
  order.timestamp = tai64ToDate(receipt.time).toISOString()
@@ -29,8 +31,6 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
   await ctx.store.remove(ActiveSellOrder, order.id)
   activeSellOrders.delete(order.id)
  }
-
- let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
 
  if (balance) {
   balance.baseAmount = BigInt(log.balance.liquid.base.toString());

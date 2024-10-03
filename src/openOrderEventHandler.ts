@@ -1,6 +1,7 @@
 import { OpenOrderEventOutput } from './abi/Orderbook';
 import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
+import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
  let event = new OpenOrderEvent({
@@ -35,7 +36,7 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   activeSellOrders.set(order.id, sellOrder)
  }
 
- let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
+ let balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
 
  if (balance) {
   balance.baseAmount = BigInt(log.balance.liquid.base.toString());

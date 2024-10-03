@@ -26,6 +26,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  let sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
  let buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
 
+ let seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
+ let buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
  let updatedSellAmount = sellOrder.amount - event.tradeSize
  const isSellOrderClosed = updatedSellAmount === 0n
@@ -35,7 +37,6 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   timestamp: tai64ToDate(receipt.time).toISOString(),
  }
  Object.assign(sellOrder, updatedSellOrder)
-
 
 
  let updatedBuyAmount = buyOrder.amount - event.tradeSize
@@ -64,12 +65,6 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   Object.assign(sellOrder, updatedSellOrder)
  }
 
- let seller_balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`))
- let buyer_balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`))
-
- // if (!seller_balance || !buyer_balance) {
- //  return;
- // }
 
  if (seller_balance) {
   seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
