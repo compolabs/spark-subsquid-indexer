@@ -1,11 +1,14 @@
 import { DataSourceBuilder } from "@subsquid/fuel-stream";
-import { ORDERBOOK_ID } from "./marketConfig";
+// import { ORDERBOOK_IDS } from "./marketConfig";
 import { augmentBlock } from "@subsquid/fuel-objects";
 import { BN, getDecodedLogs, ReceiptLogData, ReceiptType } from "fuels";
 import { assertNotNull } from '@subsquid/util-internal'
 import { Orderbook } from './abi'
 
-
+const ORDERBOOK_IDS = [
+ "0xb1ed073b4dccbff48e2ac1b52a49454e6a2921aa54effee89eb958dc5ddbffbe",
+ "0x2dd759eb0671e293b5e386f9b4f1cc8a1cb2c4ed1cf839e5de4f06f822d3790f"
+];
 // First we create a DataSource - component,
 // that defines where to get the data and what data should we get.
 export const dataSource = new DataSourceBuilder()
@@ -23,6 +26,7 @@ export const dataSource = new DataSourceBuilder()
  .setFields({
   receipt: {
    contract: true,
+   contractId: true,
    receiptType: true,
    data: true,
    is: true,
@@ -44,7 +48,7 @@ export const dataSource = new DataSourceBuilder()
  .addReceipt({
   type: ['LOG_DATA'],
   transaction: true,
-  contract: [ORDERBOOK_ID],
+  contract: ORDERBOOK_IDS,
  })
  .build()
 
@@ -69,7 +73,9 @@ export async function processBlocks(ctx: any) {
  for (let block of blocks) {
   for (let receipt of block.receipts) {
    let tx = assertNotNull(receipt.transaction);
-   if (receipt.contract == ORDERBOOK_ID && tx.status.type == 'SuccessStatus') {
+   // console.log(`Market (contract): ${receipt.contract}`);
+
+   if (ORDERBOOK_IDS.includes(receipt.contract) && tx.status.type == 'SuccessStatus') {
     receipts.push({
      type: ReceiptType.LogData,
      digest: assertNotNull(receipt.digest),

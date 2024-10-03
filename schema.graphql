@@ -15,6 +15,7 @@ type OpenOrderEvent @entity {
   orderType: OrderType! @index
   user: String! @index
   amount: BigInt!
+  market: String! @index
   price: BigInt!
   baseAmount: BigInt!
   quoteAmount: BigInt!
@@ -26,6 +27,7 @@ type OpenOrderEvent @entity {
 type Order @entity {
   id: ID!
   amount: BigInt!
+  market: String! @index
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
@@ -38,6 +40,7 @@ type Order @entity {
 type ActiveSellOrder @entity {
   id: ID!
   amount: BigInt!
+  market: String! @index
   orderType: OrderType! @index
   price: BigInt! @index
   user: String! @index
@@ -51,6 +54,7 @@ type ActiveBuyOrder @entity {
   id: ID! 
   amount: BigInt!
   orderType: OrderType! @index
+  market: String! @index
   price: BigInt! @index
   user: String! @index
   status: OrderStatus! @index
@@ -61,6 +65,7 @@ type ActiveBuyOrder @entity {
 
 type CancelOrderEvent @entity {
   id: ID!
+  market: String! @index
   orderId: String! @index
   user: String! @index
   baseAmount: BigInt!
@@ -71,6 +76,7 @@ type CancelOrderEvent @entity {
 
 type TradeOrderEvent @entity {
   id: ID!
+  market: String! @index
   sellOrderId: String! @index
   buyOrderId: String! @index
   tradeSize: BigInt! @index
@@ -88,6 +94,7 @@ type TradeOrderEvent @entity {
 
 type DepositEvent @entity {
   id: ID!
+  market: String! @index
   user: String! @index
   amount: BigInt! @index
   baseAmount: BigInt! 
@@ -99,6 +106,7 @@ type DepositEvent @entity {
 
 type WithdrawEvent @entity {
   id: ID!
+  market: String! @index
   user: String! @index
   amount: BigInt! @index
   baseAmount: BigInt! 
@@ -110,6 +118,7 @@ type WithdrawEvent @entity {
 
 type Balance @entity {
   id: ID!
+  market: String! @index
   user: String! @index
   baseAmount: BigInt! @index
   quoteAmount: BigInt! @index

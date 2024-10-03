@@ -1,11 +1,12 @@
 import { CancelOrderEventOutput } from './abi/Orderbook';
 import { CancelOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType } from './model';
-import tai64ToDate, { getIdentity, lookupOrder, lookupBalance } from './utils';
+import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, getHash } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receipt: any, cancelOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
  let event = new CancelOrderEvent({
   id: receipt.receiptId,
+  market: receipt.id,
   orderId: log.order_id,
   user: getIdentity(log.user),
   baseAmount: BigInt(log.balance.liquid.base.toString()),
@@ -29,15 +30,14 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
   activeSellOrders.delete(order.id)
  }
 
- let balance = await lookupBalance(ctx.store, balances, getIdentity(log.user))
+ let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
 
- if (!balance) {
+ if (balance) {
+  balance.baseAmount = BigInt(log.balance.liquid.base.toString());
+  balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
+  balance.timestamp = tai64ToDate(receipt.time).toISOString();
+  balances.set(balance.id, balance);
+ } else {
   return
  }
-
- balance.baseAmount = BigInt(log.balance.liquid.base.toString());
- balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
- balance.timestamp = tai64ToDate(receipt.time).toISOString();
-
- balances.set(balance.id, balance);
 }

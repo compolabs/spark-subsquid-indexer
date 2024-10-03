@@ -1,10 +1,11 @@
 import { OpenOrderEventOutput } from './abi/Orderbook';
 import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
-import tai64ToDate, { getIdentity, lookupBalance } from './utils';
+import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
 export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
  let event = new OpenOrderEvent({
   id: receipt.receiptId,
+  market: receipt.id,
   orderId: log.order_id,
   orderType: log.order_type as unknown as OrderType,
   user: getIdentity(log.user),
@@ -34,14 +35,14 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   activeSellOrders.set(order.id, sellOrder)
  }
 
- let balance = await lookupBalance(ctx.store, balances, getIdentity(log.user))
+ let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
 
- if (!balance) {
-  return
- } else {
+ if (balance) {
   balance.baseAmount = BigInt(log.balance.liquid.base.toString());
   balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
+  balances.set(balance.id, balance);
+ } else {
+  return
  }
- balances.set(balance.id, balance);
 }

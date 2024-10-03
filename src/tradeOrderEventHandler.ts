@@ -1,11 +1,12 @@
 import { TradeOrderEventOutput } from './abi/Orderbook';
 import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
-import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder } from './utils';
+import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
  let event = new TradeOrderEvent({
   id: receipt.receiptId,
+  market: receipt.id,
   sellOrderId: log.base_sell_order_id,
   buyOrderId: log.base_buy_order_id,
   tradeSize: BigInt(log.trade_size.toString()),
@@ -63,22 +64,28 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   Object.assign(sellOrder, updatedSellOrder)
  }
 
- let seller_balance = await lookupBalance(ctx.store, balances, getIdentity(log.order_seller))
- let buyer_balance = await lookupBalance(ctx.store, balances, getIdentity(log.order_buyer))
+ let seller_balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`))
+ let buyer_balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`))
 
- if (!seller_balance || !buyer_balance) {
-  return;
+ // if (!seller_balance || !buyer_balance) {
+ //  return;
+ // }
+
+ if (seller_balance) {
+  seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
+  seller_balance.quoteAmount = BigInt(log.s_balance.liquid.quote.toString());
+  seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
+  balances.set(seller_balance.id, seller_balance);
+ } else {
+  return
  }
 
- seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
- seller_balance.quoteAmount = BigInt(log.s_balance.liquid.quote.toString());
- seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-
- balances.set(seller_balance.id, seller_balance);
-
- buyer_balance.baseAmount = BigInt(log.b_balance.liquid.base.toString());
- buyer_balance.quoteAmount = BigInt(log.b_balance.liquid.quote.toString());
- buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-
- balances.set(buyer_balance.id, buyer_balance);
+ if (buyer_balance) {
+  buyer_balance.baseAmount = BigInt(log.b_balance.liquid.base.toString());
+  buyer_balance.quoteAmount = BigInt(log.b_balance.liquid.quote.toString());
+  buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
+  balances.set(buyer_balance.id, buyer_balance);
+ } else {
+  return
+ }
 }
