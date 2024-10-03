@@ -27,40 +27,52 @@ _Please refer to the [documentation website](https://docs.sqd.dev/) for a thorou
 4. Install dependencies
 
    ```sh
-   npm ci
+   npm i
    ```
 
-5. Compile the project
+5. Generate TypeORM entities from the schema file
+
+   ```sh
+   sqd codegen
+   ```
+
+6. Generate data access classes for an ABI file(s) in the ./abi folder
+
+   ```sh
+   sqd typegen
+   ```   
+
+7. Compile the project
 
    ```sh
    sqd build
    ```
 
-6. Launch Postgres database to store the data
+8. Launch Postgres database to store the data
 
    ```sh
    sqd up
    ```
 
-7. Apply database migrations to create the target schema
+9. Apply database migrations to create the target schema
 
    ```sh
    sqd migration:generate
    ```
 
-8. Run indexer
+10. Run indexer
 
    ```sh
    sqd process
    ```
 
-9. In another terminal, launch the server (open http://localhost:4000/graphql)
+11. In another terminal, launch the server (open http://localhost:4000/graphql)
 
    ```sh
    sqd serve
    ```    
 
-10. Shut down the database
+12. Shut down the database
 
    ```sh
    sqd down
