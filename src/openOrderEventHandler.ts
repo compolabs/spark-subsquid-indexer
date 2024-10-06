@@ -4,6 +4,8 @@ import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
+ 
+ // Construct the OpenOrderEvent and save in context for tracking
  let event = new OpenOrderEvent({
   id: receipt.receiptId,
   market: receipt.id,
@@ -16,10 +18,14 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   quoteAmount: BigInt(log.balance.liquid.quote.toString()),
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString(),
-  // asset: log.asset.bits,
  })
  openOrderEvents.set(event.id, event)
 
+ // Retrieve the user's balance
+ const balanceId = getHash(`${getIdentity(log.user)}-${receipt.id}`);
+ let balance = assertNotNull(await lookupBalance(ctx.store, balances, balanceId))
+
+ // Construct the Order object and save in context for tracking
  let order = new Order({
   ...event,
   id: log.order_id,
@@ -28,6 +34,7 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
  })
  orders.set(order.id, order);
 
+ // Save the order in separate collections based on order type (Buy or Sell)
  if (order.orderType == OrderType.Buy) {
   let buyOrder = new ActiveBuyOrder(order)
   activeBuyOrders.set(order.id, buyOrder)
@@ -36,8 +43,7 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   activeSellOrders.set(order.id, sellOrder)
  }
 
- let balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
-
+ // If a balance exists, update it with the new base and quote amounts
  if (balance) {
   balance.baseAmount = BigInt(log.balance.liquid.base.toString());
   balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
