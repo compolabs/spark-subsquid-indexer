@@ -3,8 +3,8 @@ import { DepositEvent, Balance } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
 export async function handleDepositEvent(log: DepositEventOutput, receipt: any, depositEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
- // console.log(`Market (contract): ${receipt.id}`);
- // console.log(`Market (contract): ${receipt.receiptId}`);
+ 
+ // Construct the DepositEvent and save in context for tracking
  let event = new DepositEvent({
   id: receipt.receiptId,
   market: receipt.id,
@@ -18,14 +18,17 @@ export async function handleDepositEvent(log: DepositEventOutput, receipt: any, 
  })
  depositEvents.set(event.id, event)
 
+ // Retrieve the user's balance
  const balanceId = getHash(`${getIdentity(log.user)}-${receipt.id}`);
  let balance = await lookupBalance(ctx.store, balances, balanceId)
 
+ // If balance exists, update it with the new base and quote amounts
  if (balance) {
   balance.baseAmount = BigInt(log.account.liquid.base.toString());
   balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
  } else {
+  // If no balance exists, create a new balance record
   balance = new Balance({
    ...event,
    id: balanceId,
