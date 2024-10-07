@@ -17,7 +17,7 @@ export const dataSource = new DataSourceBuilder()
  .setGraphql({
   url: 'https://testnet.fuel.network/v1/graphql',
   strideConcurrency: 3,
-  strideSize: 50,
+  strideSize: 30,
  })
  .setFields({
   receipt: {
