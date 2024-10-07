@@ -44,6 +44,6 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(balance.id, balance);
  } else {
-  return
+  ctx.log.warn(`NO BALANCE CANCEL FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
  }
 }

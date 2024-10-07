@@ -104,9 +104,35 @@ type DepositEvent @entity {
   timestamp: String!
 }
 
+type DepositForEvent @entity {
+  id: ID!
+  market: String! @index
+  user: String! @index
+  caller: String! @index
+  amount: BigInt! @index
+  baseAmount: BigInt! 
+  quoteAmount: BigInt!
+  asset: String! @index
+  txId: String!
+  timestamp: String!
+}
+
 type WithdrawEvent @entity {
   id: ID!
   market: String! @index
+  user: String! @index
+  amount: BigInt! @index
+  baseAmount: BigInt! 
+  quoteAmount: BigInt! 
+  asset: String! @index
+  txId: String!
+  timestamp: String!
+}
+
+type WithdrawToMarketEvent @entity {
+  id: ID!
+  market: String! @index
+  toMarket: String! @index
   user: String! @index
   amount: BigInt! @index
   baseAmount: BigInt! 

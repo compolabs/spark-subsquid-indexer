@@ -4,7 +4,7 @@ import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, l
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
- 
+
  // Construct the TradeOrderEvent and save in context for tracking
  let event = new TradeOrderEvent({
   id: receipt.receiptId,
@@ -77,7 +77,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(seller_balance.id, seller_balance);
  } else {
-  return
+  ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_seller)} BALANCE ID: ${getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
  }
 
  // Update the buyer's balance with the new base and quote amounts
@@ -87,6 +87,6 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(buyer_balance.id, buyer_balance);
  } else {
-  return
+  ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_buyer)} BALANCE ID: ${getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
  }
 }

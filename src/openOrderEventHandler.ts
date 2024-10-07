@@ -4,7 +4,7 @@ import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
- 
+
  // Construct the OpenOrderEvent and save in context for tracking
  let event = new OpenOrderEvent({
   id: receipt.receiptId,
@@ -50,6 +50,6 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(balance.id, balance);
  } else {
-  return
+  ctx.log.warn(`NO BALANCE OPEN FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
  }
 }

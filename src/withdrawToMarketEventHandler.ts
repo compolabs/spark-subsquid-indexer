@@ -1,13 +1,14 @@
-import { WithdrawEventOutput } from './abi/Market';
-import { WithdrawEvent } from './model';
+import { WithdrawToMarketEventOutput } from './abi/Market';
+import { WithdrawToMarketEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
-export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutput, receipt: any, withdrawToMarketEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
 
- // Construct the WithdrawEvent and save in context for tracking
- let event = new WithdrawEvent({
+ // Construct the WithdrawToMarketEvent and save in context for tracking
+ let event = new WithdrawToMarketEvent({
   id: receipt.receiptId,
   market: receipt.id,
+  toMarket: log.market.bits,
   user: getIdentity(log.user),
   amount: BigInt(log.amount.toString()),
   baseAmount: BigInt(log.account.liquid.base.toString()),
@@ -16,7 +17,7 @@ export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any
   txId: receipt.txId,
   timestamp: tai64ToDate(receipt.time).toISOString()
  })
- withdrawEvents.set(event.id, event)
+ withdrawToMarketEvents.set(event.id, event)
 
  // Retrieve the user's balance
  let balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
@@ -28,6 +29,6 @@ export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any
   balance.timestamp = tai64ToDate(receipt.time).toISOString();
   balances.set(balance.id, balance);
  } else {
-  ctx.log.warn(`NO BALANCE WITHDRAW FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
+  ctx.log.warn(`NO BALANCE WITHDRAW_TO FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
  }
 }

@@ -20,11 +20,8 @@
     "crypto": "^1.0.1",
     "dotenv": "^16.3.1",
     "fuels": "^0.94.8",
-    "graphql-subscriptions": "^2.0.0",
     "pg": "^8.11.3",
-    "tsdef": "^0.0.14",
-    "typeorm": "^0.3.17",
-    "ws": "^8.18.0"
+    "tsdef": "^0.0.14"
   },
   "devDependencies": {
     "@subsquid/cli": "^2.13.0",

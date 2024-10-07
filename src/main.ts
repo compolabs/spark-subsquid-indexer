@@ -5,7 +5,9 @@ import {
     OpenOrderEventOutput,
     CancelOrderEventOutput,
     DepositEventOutput,
+    DepositForEventOutput,
     WithdrawEventOutput,
+    WithdrawToMarketEventOutput,
     Market,
 } from './abi/Market'
 import isEvent from './isEvent'
@@ -14,7 +16,9 @@ import { handleOpenOrderEvent } from './openOrderEventHandler'
 import { handleTradeOrderEvent } from './tradeOrderEventHandler'
 import { handleCancelOrderEvent } from './cancelOrderEventHandler'
 import { handleDepositEvent } from './depositEventHandler'
+import { handleDepositForEvent } from './depositForEventHandler'
 import { handleWithdrawEvent } from './withdrawEventHandler'
+import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
 
 
 const database = new TypeormDatabase()
@@ -32,7 +36,9 @@ run(dataSource, database, async (ctx) => {
         openOrderEvents,
         cancelOrderEvents,
         depositEvents,
+        depositForEvents,
         withdrawEvents,
+        withdrawToMarketEvents,
     } = await processBlocks(ctx);
 
     for (let idx = 0; idx < logs.length; idx++) {
@@ -47,8 +53,12 @@ run(dataSource, database, async (ctx) => {
             await handleCancelOrderEvent(log, receipt, cancelOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
         } else if (isEvent<DepositEventOutput>('DepositEvent', log, Market.abi)) {
             await handleDepositEvent(log, receipt, depositEvents, balances, ctx);
+        } else if (isEvent<DepositForEventOutput>('DepositForEvent', log, Market.abi)) {
+            await handleDepositForEvent(log, receipt, depositForEvents, balances, ctx);
         } else if (isEvent<WithdrawEventOutput>('WithdrawEvent', log, Market.abi)) {
             await handleWithdrawEvent(log, receipt, withdrawEvents, balances, ctx);
+        } else if (isEvent<WithdrawToMarketEventOutput>('WithdrawToMarketEvent', log, Market.abi)) {
+            await handleWithdrawToMarketEvent(log, receipt, withdrawToMarketEvents, balances, ctx);
         }
     }
 
@@ -61,5 +71,7 @@ run(dataSource, database, async (ctx) => {
     await ctx.store.save([...openOrderEvents.values()])
     await ctx.store.save([...cancelOrderEvents.values()])
     await ctx.store.save([...depositEvents.values()])
+    await ctx.store.save([...depositForEvents.values()])
     await ctx.store.save([...withdrawEvents.values()])
+    await ctx.store.save([...withdrawToMarketEvents.values()])
 })

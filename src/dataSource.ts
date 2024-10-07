@@ -63,7 +63,9 @@ export async function processBlocks(ctx: any) {
  let openOrderEvents: Map<string, any> = new Map();
  let cancelOrderEvents: Map<string, any> = new Map();
  let depositEvents: Map<string, any> = new Map();
+ let depositForEvents: Map<string, any> = new Map();
  let withdrawEvents: Map<string, any> = new Map();
+ let withdrawToMarketEvents: Map<string, any> = new Map();
 
  const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = [];
  for (let block of blocks) {
@@ -90,5 +92,5 @@ export async function processBlocks(ctx: any) {
  }
 
  let logs: any[] = getDecodedLogs(receipts, Market.abi);
- return { receipts, logs, balances, orders, activeBuyOrders, activeSellOrders, tradeOrderEvents, openOrderEvents, cancelOrderEvents, depositEvents, withdrawEvents };
+ return { receipts, logs, balances, orders, activeBuyOrders, activeSellOrders, tradeOrderEvents, openOrderEvents, cancelOrderEvents, depositEvents, depositForEvents, withdrawEvents, withdrawToMarketEvents };
 }
