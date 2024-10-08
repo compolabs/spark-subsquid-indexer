@@ -20,21 +20,21 @@ import { handleDepositForEvent } from './depositForEventHandler'
 import { handleWithdrawEvent } from './withdrawEventHandler'
 import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
 
-let balances: Map<string, any> = new Map();
-let orders: Map<string, any> = new Map();
-let activeBuyOrders: Map<string, any> = new Map();
-let activeSellOrders: Map<string, any> = new Map();
-let tradeOrderEvents: Map<string, any> = new Map();
-let openOrderEvents: Map<string, any> = new Map();
-let cancelOrderEvents: Map<string, any> = new Map();
-let depositEvents: Map<string, any> = new Map();
-let depositForEvents: Map<string, any> = new Map();
-let withdrawEvents: Map<string, any> = new Map();
-let withdrawToMarketEvents: Map<string, any> = new Map();
-
 const database = new TypeormDatabase()
 
 run(dataSource, database, async (ctx) => {
+
+    let balances: Map<string, any> = new Map();
+    let orders: Map<string, any> = new Map();
+    let activeBuyOrders: Map<string, any> = new Map();
+    let activeSellOrders: Map<string, any> = new Map();
+    let tradeOrderEvents: Map<string, any> = new Map();
+    let openOrderEvents: Map<string, any> = new Map();
+    let cancelOrderEvents: Map<string, any> = new Map();
+    let depositEvents: Map<string, any> = new Map();
+    let depositForEvents: Map<string, any> = new Map();
+    let withdrawEvents: Map<string, any> = new Map();
+    let withdrawToMarketEvents: Map<string, any> = new Map();
 
     const { receipts, logs } = await processBlocks(ctx);
 
@@ -58,7 +58,6 @@ run(dataSource, database, async (ctx) => {
             await handleWithdrawToMarketEvent(log, receipt, withdrawToMarketEvents, balances, ctx);
         }
     }
-
 
     await ctx.store.upsert([...balances.values()])
     await ctx.store.upsert([...orders.values()])
