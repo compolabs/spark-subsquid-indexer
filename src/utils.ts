@@ -1,16 +1,16 @@
 import crypto from "crypto";
-import BN from "./BN";
 import { Store } from "@subsquid/typeorm-store";
 import { ActiveBuyOrder, ActiveSellOrder, Balance, Order } from "./model";
 import { IdentityOutput } from "./abi/Market";
 import { assertNotNull } from '@subsquid/util-internal'
+import { BN } from "fuels";
 
 export const getHash = (data: string) => {
  return crypto.createHash("sha256").update(data).digest("hex");
 };
 
 export default function tai64ToDate(num: bigint) {
- const dateStr = new BN((num - BigInt(Math.pow(2, 62)) - BigInt(10)).toString()).times(1000).toString();
+ const dateStr = new BN((num - BigInt(Math.pow(2, 62)) - BigInt(10)).toString()).mul(new BN(1000)).toString();
  return new Date(+dateStr);
 }
 
