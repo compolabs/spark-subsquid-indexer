@@ -38,7 +38,7 @@ export async function lookupBuyOrder(store: Store, orders: Map<string, ActiveBuy
 }
 
 
-export async function lookupSellOrder(store: Store, orders: Map<string, ActiveBuyOrder>, id: string) {
+export async function lookupSellOrder(store: Store, orders: Map<string, ActiveSellOrder>, id: string) {
  let order = orders.get(id)
  if (!order) {
   order = await store.get(ActiveSellOrder, id)
