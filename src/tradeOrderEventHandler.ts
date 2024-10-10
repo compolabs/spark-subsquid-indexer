@@ -25,58 +25,70 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  tradeOrderEvents.set(event.id, event)
 
  // Retrieve the buy and sell orders
- let sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
- let sellOrderActive = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
- let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
+ let sellOrder = await lookupOrder(ctx.store, orders, log.base_sell_order_id)
+ let buyOrder = await lookupOrder(ctx.store, orders, log.base_buy_order_id)
+ let sellOrderActive = await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id)
+ let buyOrderActive = await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_sell_order_id)
 
  // Retrieve the balances for both the seller and the buyer
  let seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
  let buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
  // Update the sell order status to "Closed" if fully executed, otherwise "Active"
- let updatedSellAmount = sellOrder.amount - event.tradeSize
- const isSellOrderClosed = updatedSellAmount === 0n
- // let updatedSellOrder = {
- //  updatedSellAmount,
- //  status: updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
- //  timestamp: tai64ToDate(receipt.time).toISOString(),
- // }
- // Object.assign(sellOrder, updatedSellOrder)
-
- sellOrder.amount = sellOrder.amount - event.tradeSize
- sellOrderActive.amount = sellOrderActive.amount - event.tradeSize
-
- sellOrder.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
- sellOrderActive.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
- sellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
- sellOrderActive.timestamp = tai64ToDate(receipt.time).toISOString()
- orders.set(sellOrder.id, sellOrder);
- activeSellOrders.set(sellOrderActive.id, sellOrderActive);
-
- // Remove the sell order from active orders if fully executed
- if (isSellOrderClosed) {
-  await ctx.store.remove(ActiveSellOrder, log.base_sell_order_id)
-  activeSellOrders.delete(log.base_sell_order_id)
+ if (sellOrder) {
+  let updatedSellAmount = sellOrder.amount - event.tradeSize
+  sellOrder.amount = sellOrder.amount - event.tradeSize
+  sellOrder.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+  sellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+  orders.set(sellOrder.id, sellOrder);
  } else {
-  Object.assign(sellOrder, sellOrderActive)
+  ctx.log.warn(`NO SELL ORDER TRADE FOR USER: ${getIdentity(log.order_seller)} ORDER ID: ${log.base_sell_order_id} MARKET: ${receipt.id}.`);
  }
 
- // Update the buy order status to "Closed" if fully executed, otherwise "Active"
- let updatedBuyAmount = buyOrder.amount - event.tradeSize
- const isBuyOrderClosed = updatedBuyAmount === 0n
- let updatedBuyOrder = {
-  updatedBuyAmount,
-  status: updatedBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- }
- Object.assign(buyOrder, updatedBuyOrder)
+ if (sellOrderActive) {
+  let updatedSellActiveAmount = sellOrderActive.amount - event.tradeSize
+  const isSellOrderClosed = updatedSellActiveAmount === 0n
+  sellOrderActive.amount = sellOrderActive.amount - event.tradeSize
+  sellOrderActive.status = updatedSellActiveAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+  sellOrderActive.timestamp = tai64ToDate(receipt.time).toISOString()
+  activeSellOrders.set(sellOrderActive.id, sellOrderActive);
 
- // Remove the buy order from active orders if fully executed
- if (isBuyOrderClosed) {
-  await ctx.store.remove(ActiveBuyOrder, log.base_buy_order_id)
-  activeBuyOrders.delete(log.base_buy_order_id)
+  if (isSellOrderClosed) {
+   await ctx.store.remove(ActiveSellOrder, log.base_sell_order_id)
+   activeSellOrders.delete(log.base_sell_order_id)
+  } else {
+   activeSellOrders.set(sellOrderActive.id, sellOrderActive);
+  }
  } else {
-  Object.assign(buyOrder, updatedBuyOrder)
+  ctx.log.warn(`NO SELL ORDER ACTIVE TRADE FOR USER: ${getIdentity(log.order_seller)} ORDER ID: ${log.base_sell_order_id} MARKET: ${receipt.id}.`);
+ }
+
+ if (buyOrder) {
+  let updatedBuyAmount = buyOrder.amount - event.tradeSize
+  buyOrder.amount = buyOrder.amount - event.tradeSize
+  buyOrder.status = updatedBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+  buyOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+  orders.set(buyOrder.id, buyOrder);
+ } else {
+  ctx.log.warn(`NO BUY ORDER TRADE FOR USER: ${getIdentity(log.order_buyer)} ORDER ID: ${log.base_buy_order_id} MARKET: ${receipt.id}.`);
+ }
+
+ if (buyOrderActive) {
+  let updatedBuyActiveAmount = buyOrderActive.amount - event.tradeSize
+  const isBuyOrderClosed = updatedBuyActiveAmount === 0n
+  buyOrderActive.amount = buyOrderActive.amount - event.tradeSize
+  buyOrderActive.status = updatedBuyActiveAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+  buyOrderActive.timestamp = tai64ToDate(receipt.time).toISOString()
+  activeBuyOrders.set(buyOrderActive.id, buyOrderActive);
+
+  if (isBuyOrderClosed) {
+   await ctx.store.remove(ActiveBuyOrder, log.base_buy_order_id)
+   activeBuyOrders.delete(log.base_buy_order_id)
+  } else {
+   activeBuyOrders.set(buyOrderActive.id, buyOrderActive);
+  }
+ } else {
+  ctx.log.warn(`NO BUY ORDER ACTIVE TRADE FOR USER: ${getIdentity(log.order_buyer)} ORDER ID: ${log.base_buy_order_id} MARKET: ${receipt.id}.`);
  }
 
  // Update the seller's balance with the new base and quote amounts
