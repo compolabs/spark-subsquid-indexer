@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, BigIntColumn as BigIntColumn_, BooleanColumn as BooleanColumn_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
 
 @Entity_()
 export class TradeOrderEvent {
@@ -36,10 +36,6 @@ export class TradeOrderEvent {
     @Index_()
     @StringColumn_({nullable: false})
     buyer!: string
-
-    @Index_()
-    @BooleanColumn_({nullable: false})
-    sellerIsMaker!: boolean
 
     @BigIntColumn_({nullable: false})
     sellerBaseAmount!: bigint

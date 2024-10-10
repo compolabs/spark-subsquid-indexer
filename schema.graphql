@@ -83,7 +83,6 @@ type TradeOrderEvent @entity {
   tradePrice: BigInt! @index
   seller: String! @index
   buyer: String! @index
-  sellerIsMaker: Boolean! @index
   sellerBaseAmount: BigInt!
   sellerQuoteAmount: BigInt!
   buyerBaseAmount: BigInt!
