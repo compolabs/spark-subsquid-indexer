@@ -3,7 +3,6 @@ lib/
 .idea
 .DS_Store
 /node_modules
-/src/abi
-/src/model
+# /src/abi
+# /src/model
 /db
-# orderbook.bin

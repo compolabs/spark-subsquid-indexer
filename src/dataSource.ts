@@ -55,18 +55,6 @@ export async function processBlocks(ctx: any) {
  // to enrich block items with references to related objects.
  let blocks = ctx.blocks.map(augmentBlock);
 
- let balances: Map<string, any> = new Map();
- let orders: Map<string, any> = new Map();
- let activeBuyOrders: Map<string, any> = new Map();
- let activeSellOrders: Map<string, any> = new Map();
- let tradeOrderEvents: Map<string, any> = new Map();
- let openOrderEvents: Map<string, any> = new Map();
- let cancelOrderEvents: Map<string, any> = new Map();
- let depositEvents: Map<string, any> = new Map();
- let depositForEvents: Map<string, any> = new Map();
- let withdrawEvents: Map<string, any> = new Map();
- let withdrawToMarketEvents: Map<string, any> = new Map();
-
  const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = [];
  for (let block of blocks) {
   for (let receipt of block.receipts) {
@@ -92,5 +80,5 @@ export async function processBlocks(ctx: any) {
  }
 
  let logs: any[] = getDecodedLogs(receipts, Market.abi);
- return { receipts, logs, balances, orders, activeBuyOrders, activeSellOrders, tradeOrderEvents, openOrderEvents, cancelOrderEvents, depositEvents, depositForEvents, withdrawEvents, withdrawToMarketEvents };
+ return { receipts, logs };
 }

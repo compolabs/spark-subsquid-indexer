@@ -1,6 +1,5 @@
 import { run } from '@subsquid/batch-processor'
 import { TypeormDatabase } from '@subsquid/typeorm-store'
-import { getEventType } from './types'
 import { dataSource, processBlocks } from './dataSource'
 import { handleOpenOrderEvent } from './openOrderEventHandler'
 import { handleTradeOrderEvent } from './tradeOrderEventHandler'
@@ -9,33 +8,31 @@ import { handleDepositEvent } from './depositEventHandler'
 import { handleDepositForEvent } from './depositForEventHandler'
 import { handleWithdrawEvent } from './withdrawEventHandler'
 import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
-
+import { getEventType } from './types'
 
 const database = new TypeormDatabase()
 
 run(dataSource, database, async (ctx) => {
 
-    const {
-        receipts,
-        logs,
-        balances,
-        orders,
-        activeBuyOrders,
-        activeSellOrders,
-        tradeOrderEvents,
-        openOrderEvents,
-        cancelOrderEvents,
-        depositEvents,
-        depositForEvents,
-        withdrawEvents,
-        withdrawToMarketEvents,
-    } = await processBlocks(ctx);
+    let balances: Map<string, any> = new Map();
+    let orders: Map<string, any> = new Map();
+    let activeBuyOrders: Map<string, any> = new Map();
+    let activeSellOrders: Map<string, any> = new Map();
+    let tradeOrderEvents: Map<string, any> = new Map();
+    let openOrderEvents: Map<string, any> = new Map();
+    let cancelOrderEvents: Map<string, any> = new Map();
+    let depositEvents: Map<string, any> = new Map();
+    let depositForEvents: Map<string, any> = new Map();
+    let withdrawEvents: Map<string, any> = new Map();
+    let withdrawToMarketEvents: Map<string, any> = new Map();
+
+    const { receipts, logs } = await processBlocks(ctx);
 
     for (let idx = 0; idx < logs.length; idx++) {
         let log = logs[idx];
         let receipt = receipts[idx];
-
         let event = getEventType(receipt.val1)
+
         if (event == 'OpenOrderEvent') {
             await handleOpenOrderEvent(log, receipt, openOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
         } else if (event == 'TradeOrderEvent') {
@@ -52,7 +49,6 @@ run(dataSource, database, async (ctx) => {
             await handleWithdrawToMarketEvent(log, receipt, withdrawToMarketEvents, balances, ctx);
         }
     }
-
 
     await ctx.store.upsert([...balances.values()])
     await ctx.store.upsert([...orders.values()])
