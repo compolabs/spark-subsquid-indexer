@@ -26,8 +26,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  tradeOrderEvents.set(event.id, event)
 
  // Retrieve the buy and sell orders
- let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, orders, log.base_sell_order_id))
- let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, orders, log.base_buy_order_id))
+ let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
+ let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
 
  // Retrieve the balances for both the seller and the buyer
  let seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
