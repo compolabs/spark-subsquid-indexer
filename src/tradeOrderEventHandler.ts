@@ -14,7 +14,6 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   tradeSize: BigInt(log.trade_size.toString()),
   tradePrice: BigInt(log.trade_price.toString()),
   seller: getIdentity(log.order_seller),
-  sellerIsMaker: log.seller_is_maker,
   buyer: getIdentity(log.order_buyer),
   sellerBaseAmount: BigInt(log.s_balance.liquid.base.toString()),
   sellerQuoteAmount: BigInt(log.s_balance.liquid.quote.toString()),
@@ -26,47 +25,57 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  tradeOrderEvents.set(event.id, event)
 
  // Retrieve the buy and sell orders
- let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
- let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
+ let sellActiveOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
+ let sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
+ let buyActiveOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
+ let buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
 
  // Retrieve the balances for both the seller and the buyer
  let seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
  let buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
- // Update the sell order status to "Closed" if fully executed, otherwise "Active"
+ // Update the sell order and sell active order status to "Closed" if fully executed, otherwise "Active"
  let updatedSellAmount = sellOrder.amount - event.tradeSize
- const isSellOrderClosed = updatedSellAmount === 0n
- let updatedSellOrder = {
-  updatedSellAmount,
-  status: updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- }
- Object.assign(sellOrder, updatedSellOrder)
+ sellOrder.amount = sellOrder.amount - event.tradeSize
+ sellOrder.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ sellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+ orders.set(sellOrder.id, sellOrder);
+
+ let updatedActiveSellAmount = sellActiveOrder.amount - event.tradeSize
+ const isActiveSellOrderClosed = updatedActiveSellAmount === 0n
+ sellActiveOrder.amount = sellActiveOrder.amount - event.tradeSize
+ sellActiveOrder.status = updatedActiveSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ sellActiveOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+ activeSellOrders.set(sellActiveOrder.id, sellActiveOrder);
 
  // Remove the sell order from active orders if fully executed
- if (isSellOrderClosed) {
+ if (isActiveSellOrderClosed) {
   await ctx.store.remove(ActiveSellOrder, log.base_sell_order_id)
   activeSellOrders.delete(log.base_sell_order_id)
  } else {
-  Object.assign(sellOrder, updatedSellOrder)
+  activeSellOrders.set(sellActiveOrder.id, sellActiveOrder);
  }
 
- // Update the buy order status to "Closed" if fully executed, otherwise "Active"
+ // Update the buy order and buy active order status to "Closed" if fully executed, otherwise "Active"
  let updatedBuyAmount = buyOrder.amount - event.tradeSize
- const isBuyOrderClosed = updatedBuyAmount === 0n
- let updatedBuyOrder = {
-  updatedBuyAmount,
-  status: updatedBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- }
- Object.assign(buyOrder, updatedBuyOrder)
+ buyOrder.amount = buyOrder.amount - event.tradeSize
+ buyOrder.status = updatedBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ buyOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+ orders.set(buyOrder.id, buyOrder);
+
+ let updatedActiveBuyAmount = buyActiveOrder.amount - event.tradeSize
+ const isActiveBuyOrderClosed = updatedActiveBuyAmount === 0n
+ buyActiveOrder.amount = buyActiveOrder.amount - event.tradeSize
+ buyActiveOrder.status = updatedActiveBuyAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ buyActiveOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+ activeBuyOrders.set(buyActiveOrder.id, buyActiveOrder);
 
  // Remove the buy order from active orders if fully executed
- if (isBuyOrderClosed) {
+ if (isActiveBuyOrderClosed) {
   await ctx.store.remove(ActiveBuyOrder, log.base_buy_order_id)
   activeBuyOrders.delete(log.base_buy_order_id)
  } else {
-  Object.assign(buyOrder, updatedBuyOrder)
+  activeBuyOrders.set(buyActiveOrder.id, buyActiveOrder);
  }
 
  // Update the seller's balance with the new base and quote amounts
