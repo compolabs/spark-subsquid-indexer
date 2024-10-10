@@ -25,7 +25,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  tradeOrderEvents.set(event.id, event)
 
  // Retrieve the buy and sell orders
- let sellOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
+ let sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
+ let sellOrderActive = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
  let buyOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
 
  // Retrieve the balances for both the seller and the buyer
@@ -35,19 +36,29 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
  // Update the sell order status to "Closed" if fully executed, otherwise "Active"
  let updatedSellAmount = sellOrder.amount - event.tradeSize
  const isSellOrderClosed = updatedSellAmount === 0n
- let updatedSellOrder = {
-  updatedSellAmount,
-  status: updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
-  timestamp: tai64ToDate(receipt.time).toISOString(),
- }
- Object.assign(sellOrder, updatedSellOrder)
+ // let updatedSellOrder = {
+ //  updatedSellAmount,
+ //  status: updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active,
+ //  timestamp: tai64ToDate(receipt.time).toISOString(),
+ // }
+ // Object.assign(sellOrder, updatedSellOrder)
+
+ sellOrder.amount = sellOrder.amount - event.tradeSize
+ sellOrderActive.amount = sellOrderActive.amount - event.tradeSize
+
+ sellOrder.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ sellOrderActive.status = updatedSellAmount === 0n ? OrderStatus.Closed : OrderStatus.Active
+ sellOrder.timestamp = tai64ToDate(receipt.time).toISOString()
+ sellOrderActive.timestamp = tai64ToDate(receipt.time).toISOString()
+ orders.set(sellOrder.id, sellOrder);
+ activeSellOrders.set(sellOrderActive.id, sellOrderActive);
 
  // Remove the sell order from active orders if fully executed
  if (isSellOrderClosed) {
   await ctx.store.remove(ActiveSellOrder, log.base_sell_order_id)
   activeSellOrders.delete(log.base_sell_order_id)
  } else {
-  Object.assign(sellOrder, updatedSellOrder)
+  Object.assign(sellOrder, sellOrderActive)
  }
 
  // Update the buy order status to "Closed" if fully executed, otherwise "Active"
