@@ -18,6 +18,7 @@
     "fuels": "^0.94.9"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.3",
     "@subsquid/cli": "^2.13.0",
     "@subsquid/typeorm-codegen": "^2.0.2",
     "@types/node": "^18.18.14",

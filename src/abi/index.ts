@@ -8,5 +8,5 @@
   Fuels version: 0.94.9
 */
 
-export { Market } from './Market';
-export { MarketFactory } from './MarketFactory';
+export { Market } from "./Market";
+export { MarketFactory } from "./MarketFactory";
