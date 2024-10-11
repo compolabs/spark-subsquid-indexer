@@ -37,10 +37,10 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   // Save the order in separate collections based on order type (Buy or Sell)
   if (order.orderType === OrderType.Buy) {
     const buyOrder = new ActiveBuyOrder(order)
-    activeBuyOrders.set(order.id, buyOrder)
+    activeBuyOrders.set(buyOrder.id, buyOrder)
   } else if (order.orderType === OrderType.Sell) {
     const sellOrder = new ActiveSellOrder(order)
-    activeSellOrders.set(order.id, sellOrder)
+    activeSellOrders.set(sellOrder.id, sellOrder)
   }
 
   // If a balance exists, update it with the new base and quote amounts
