@@ -1,7 +1,7 @@
-import crypto from "crypto";
-import { Store } from "@subsquid/typeorm-store";
+import crypto from "node:crypto";
+import type { Store } from "@subsquid/typeorm-store";
 import { ActiveBuyOrder, ActiveSellOrder, Balance, Order } from "./model";
-import { IdentityOutput } from "./abi/Market";
+import type { IdentityOutput } from "./abi/Market";
 import { assertNotNull } from '@subsquid/util-internal'
 import { BN } from "fuels";
 
