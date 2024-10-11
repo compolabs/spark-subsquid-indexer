@@ -1,44 +1,33 @@
-import type { WithdrawEventOutput } from "./abi/Market";
-import { WithdrawEvent } from "./model";
-import tai64ToDate, { getHash, getIdentity, lookupBalance } from "./utils";
+import type { WithdrawEventOutput } from './abi/Market';
+import { WithdrawEvent } from './model';
+import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
-export async function handleWithdrawEvent(
-	log: WithdrawEventOutput,
-	receipt: any,
-	withdrawEvents: Map<string, any>,
-	balances: Map<string, any>,
-	ctx: any,
-) {
-	// Construct the WithdrawEvent and save in context for tracking
-	const event = new WithdrawEvent({
-		id: receipt.receiptId,
-		market: receipt.id,
-		user: getIdentity(log.user),
-		amount: BigInt(log.amount.toString()),
-		baseAmount: BigInt(log.account.liquid.base.toString()),
-		quoteAmount: BigInt(log.account.liquid.quote.toString()),
-		asset: log.asset.bits,
-		txId: receipt.txId,
-		timestamp: tai64ToDate(receipt.time).toISOString(),
-	});
-	withdrawEvents.set(event.id, event);
+export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
 
-	// Retrieve the user's balance
-	const balance = await lookupBalance(
-		ctx.store,
-		balances,
-		getHash(`${getIdentity(log.user)}-${receipt.id}`),
-	);
+  // Construct the WithdrawEvent and save in context for tracking
+  const event = new WithdrawEvent({
+    id: receipt.receiptId,
+    market: receipt.id,
+    user: getIdentity(log.user),
+    amount: BigInt(log.amount.toString()),
+    baseAmount: BigInt(log.account.liquid.base.toString()),
+    quoteAmount: BigInt(log.account.liquid.quote.toString()),
+    asset: log.asset.bits,
+    txId: receipt.txId,
+    timestamp: tai64ToDate(receipt.time).toISOString()
+  })
+  withdrawEvents.set(event.id, event)
 
-	// If a balance exists, update it with the new base and quote amounts
-	if (balance) {
-		balance.baseAmount = BigInt(log.account.liquid.base.toString());
-		balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
-		balance.timestamp = tai64ToDate(receipt.time).toISOString();
-		balances.set(balance.id, balance);
-	} else {
-		ctx.log.warn(
-			`NO BALANCE WITHDRAW FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`,
-		);
-	}
+  // Retrieve the user's balance
+  const balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
+
+  // If a balance exists, update it with the new base and quote amounts
+  if (balance) {
+    balance.baseAmount = BigInt(log.account.liquid.base.toString());
+    balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
+    balance.timestamp = tai64ToDate(receipt.time).toISOString();
+    balances.set(balance.id, balance);
+  } else {
+    ctx.log.warn(`NO BALANCE WITHDRAW FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
+  }
 }

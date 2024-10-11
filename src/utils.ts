@@ -1,9 +1,9 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import type { Store } from "@subsquid/typeorm-store";
-import { assertNotNull } from "@subsquid/util-internal";
-import { BN } from "fuels";
-import type { IdentityOutput } from "./abi/Market";
 import { ActiveBuyOrder, ActiveSellOrder, Balance, Order } from "./model";
+import type { IdentityOutput } from "./abi/Market";
+import { assertNotNull } from '@subsquid/util-internal'
+import { BN } from "fuels";
 
 export const getHash = (data: string) => {
 	return crypto.createHash("sha256").update(data).digest("hex");
