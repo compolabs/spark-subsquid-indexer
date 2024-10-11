@@ -11,7 +11,7 @@ export const getHash = (data: string) => {
 
 export default function tai64ToDate(num: bigint) {
 	const dateStr = new BN(
-		(num - BigInt(Math.pow(2, 62)) - BigInt(10)).toString(),
+		(num - BigInt(2 ** 62) - BigInt(10)).toString(),
 	)
 		.mul(new BN(1000))
 		.toString();
