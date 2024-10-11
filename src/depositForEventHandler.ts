@@ -1,11 +1,11 @@
-import { DepositForEventOutput } from './abi/Market';
+import type { DepositForEventOutput } from './abi/Market';
 import { DepositForEvent, Balance } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
 export async function handleDepositForEvent(log: DepositForEventOutput, receipt: any, depositForEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
 
  // Construct the DepositForEvent and save in context for tracking
- let event = new DepositForEvent({
+ const event = new DepositForEvent({
   id: receipt.receiptId,
   market: receipt.id,
   user: getIdentity(log.user),
