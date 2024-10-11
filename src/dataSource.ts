@@ -56,9 +56,9 @@ export async function processBlocks(ctx: any) {
   const blocks = ctx.blocks.map(augmentBlock);
 
   const receipts: (ReceiptLogData & { data: string, time: bigint, txId: string, receiptId: string })[] = [];
-	for (const block of blocks) {
-		for (const receipt of block.receipts) {
-			const tx = assertNotNull(receipt.transaction);
+  for (const block of blocks) {
+    for (const receipt of block.receipts) {
+      const tx = assertNotNull(receipt.transaction);
       if (MARKETS.includes(receipt.contract) && tx.status.type === 'SuccessStatus') {
         receipts.push({
           type: ReceiptType.LogData,
@@ -79,6 +79,6 @@ export async function processBlocks(ctx: any) {
     }
   }
 
-	const logs: any[] = getDecodedLogs(receipts, Market.abi);
+  const logs: any[] = getDecodedLogs(receipts, Market.abi);
   return { receipts, logs };
 }

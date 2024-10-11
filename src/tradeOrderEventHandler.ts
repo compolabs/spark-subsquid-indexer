@@ -24,19 +24,17 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   })
   tradeOrderEvents.set(event.id, event)
 
-  // Retrieve the active buy and active sell orders
-  const sellActiveOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
-  const buyActiveOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
-  
   // Retrieve the buy and sell orders
+  const sellActiveOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
   const sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
+  const buyActiveOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
   const buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
 
-  // Retrieve the balances for buyer and seller
+  // Retrieve the balances for both the seller and the buyer
   const seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
   const buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
-  // Update the active sell order status to "Closed" if fully executed, otherwise "Active"
+  // Update the sell active order status to "Closed" if fully executed, otherwise "Active"
   if (sellActiveOrder) {
     const updatedActiveSellAmount = sellActiveOrder.amount - event.tradeSize
     const isActiveSellOrderClosed = updatedActiveSellAmount === 0n
@@ -56,7 +54,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
     ctx.log.warn(`NO ACTIVE SELL ORDER TRADE FOR USER: ${getIdentity(log.order_seller)} ORDER ID: ${log.base_sell_order_id} MARKET: ${receipt.id}.`);
   }
 
-  // Update the active buy order status to "Closed" if fully executed, otherwise "Active"
+  // Update the buy active order status to "Closed" if fully executed, otherwise "Active"
   if (buyActiveOrder) {
     const updatedActiveBuyAmount = buyActiveOrder.amount - event.tradeSize
     const isActiveBuyOrderClosed = updatedActiveBuyAmount === 0n
