@@ -14,38 +14,38 @@ const database = new TypeormDatabase()
 
 run(dataSource, database, async (ctx) => {
 
-    let balances: Map<string, any> = new Map();
-    let orders: Map<string, any> = new Map();
-    let activeBuyOrders: Map<string, any> = new Map();
-    let activeSellOrders: Map<string, any> = new Map();
-    let tradeOrderEvents: Map<string, any> = new Map();
-    let openOrderEvents: Map<string, any> = new Map();
-    let cancelOrderEvents: Map<string, any> = new Map();
-    let depositEvents: Map<string, any> = new Map();
-    let depositForEvents: Map<string, any> = new Map();
-    let withdrawEvents: Map<string, any> = new Map();
-    let withdrawToMarketEvents: Map<string, any> = new Map();
+    const balances: Map<string, any> = new Map();
+    const orders: Map<string, any> = new Map();
+    const activeBuyOrders: Map<string, any> = new Map();
+    const activeSellOrders: Map<string, any> = new Map();
+    const tradeOrderEvents: Map<string, any> = new Map();
+    const openOrderEvents: Map<string, any> = new Map();
+    const cancelOrderEvents: Map<string, any> = new Map();
+    const depositEvents: Map<string, any> = new Map();
+    const depositForEvents: Map<string, any> = new Map();
+    const withdrawEvents: Map<string, any> = new Map();
+    const withdrawToMarketEvents: Map<string, any> = new Map();
 
     const { receipts, logs } = await processBlocks(ctx);
 
     for (let idx = 0; idx < logs.length; idx++) {
-        let log = logs[idx];
-        let receipt = receipts[idx];
-        let event = getEventType(receipt.val1)
+        const log = logs[idx];
+        const receipt = receipts[idx];
+        const event = getEventType(receipt.val1)
 
-        if (event == 'OpenOrderEvent') {
+        if (event === 'OpenOrderEvent') {
             await handleOpenOrderEvent(log, receipt, openOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (event == 'TradeOrderEvent') {
+        } else if (event === 'TradeOrderEvent') {
             await handleTradeOrderEvent(log, receipt, tradeOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (event == 'CancelOrderEvent') {
+        } else if (event === 'CancelOrderEvent') {
             await handleCancelOrderEvent(log, receipt, cancelOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
-        } else if (event == 'DepositEvent') {
+        } else if (event === 'DepositEvent') {
             await handleDepositEvent(log, receipt, depositEvents, balances, ctx);
-        } else if (event == 'DepositForEvent') {
+        } else if (event === 'DepositForEvent') {
             await handleDepositForEvent(log, receipt, depositForEvents, balances, ctx);
-        } else if (event == 'WithdrawEvent') {
+        } else if (event === 'WithdrawEvent') {
             await handleWithdrawEvent(log, receipt, withdrawEvents, balances, ctx);
-        } else if (event == 'WithdrawToMarketEvent') {
+        } else if (event === 'WithdrawToMarketEvent') {
             await handleWithdrawToMarketEvent(log, receipt, withdrawToMarketEvents, balances, ctx);
         }
     }
