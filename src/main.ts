@@ -5,7 +5,6 @@ import { handleOpenOrderEvent } from './openOrderEventHandler'
 import { handleTradeOrderEvent } from './tradeOrderEventHandler'
 import { handleCancelOrderEvent } from './cancelOrderEventHandler'
 import { handleDepositEvent } from './depositEventHandler'
-import { handleDepositForEvent } from './depositForEventHandler'
 import { handleWithdrawEvent } from './withdrawEventHandler'
 import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
 import { getEventType } from './types'
@@ -22,7 +21,6 @@ run(dataSource, database, async (ctx) => {
     const openOrderEvents: Map<string, any> = new Map();
     const cancelOrderEvents: Map<string, any> = new Map();
     const depositEvents: Map<string, any> = new Map();
-    const depositForEvents: Map<string, any> = new Map();
     const withdrawEvents: Map<string, any> = new Map();
     const withdrawToMarketEvents: Map<string, any> = new Map();
 
@@ -41,8 +39,6 @@ run(dataSource, database, async (ctx) => {
             await handleCancelOrderEvent(log, receipt, cancelOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
         } else if (event === 'DepositEvent') {
             await handleDepositEvent(log, receipt, depositEvents, balances, ctx);
-        } else if (event === 'DepositForEvent') {
-            await handleDepositForEvent(log, receipt, depositForEvents, balances, ctx);
         } else if (event === 'WithdrawEvent') {
             await handleWithdrawEvent(log, receipt, withdrawEvents, balances, ctx);
         } else if (event === 'WithdrawToMarketEvent') {
@@ -58,7 +54,6 @@ run(dataSource, database, async (ctx) => {
     await ctx.store.save([...openOrderEvents.values()])
     await ctx.store.save([...cancelOrderEvents.values()])
     await ctx.store.save([...depositEvents.values()])
-    await ctx.store.save([...depositForEvents.values()])
     await ctx.store.save([...withdrawEvents.values()])
     await ctx.store.save([...withdrawToMarketEvents.values()])
 })
