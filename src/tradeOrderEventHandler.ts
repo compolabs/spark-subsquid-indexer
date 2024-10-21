@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import type { TradeOrderEventOutput } from './abi/Market';
 import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
-import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash } from './utils';
+import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
 export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
@@ -35,8 +35,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   const buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
 
   // Retrieve the balances for buyer and seller
-  const seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
-  const buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
+  const sellerBalance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
+  const buyerBalance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
   // Update the active sell order status to "Closed" if fully executed, otherwise "Active"
   if (sellActiveOrder) {
@@ -99,24 +99,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   } else {
     ctx.log.warn(`NO BUY ORDER TRADE FOR USER: ${getIdentity(log.order_buyer)} ORDER ID: ${log.base_buy_order_id} MARKET: ${receipt.id}.`);
   }
-
-  // Update the seller's balance with the new base and quote amounts
-  if (seller_balance) {
-    seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
-    seller_balance.quoteAmount = BigInt(log.s_balance.liquid.quote.toString());
-    seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(seller_balance.id, seller_balance);
-  } else {
-    ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_seller)} BALANCE ID: ${getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
-
-  // Update the buyer's balance with the new base and quote amounts
-  if (buyer_balance) {
-    buyer_balance.baseAmount = BigInt(log.b_balance.liquid.base.toString());
-    buyer_balance.quoteAmount = BigInt(log.b_balance.liquid.quote.toString());
-    buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(buyer_balance.id, buyer_balance);
-  } else {
-    ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_buyer)} BALANCE ID: ${getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
+  
+  // Update the buyer and seller balances with the new base and quote amounts
+  updateUserBalance("TRADE", BigInt(log.s_balance.liquid.base.toString()), BigInt(log.s_balance.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), sellerBalance, log, receipt, balances, ctx);
+  updateUserBalance("TRADE", BigInt(log.b_balance.liquid.base.toString()), BigInt(log.b_balance.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), buyerBalance, log, receipt, balances, ctx);
 }

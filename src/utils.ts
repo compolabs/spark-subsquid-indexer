@@ -64,3 +64,14 @@ export async function lookupBalance(store: Store, balances: Map<string, Balance>
  }
  return balance
 }
+
+export function updateUserBalance(eventName: string, baseAmount: bigint, quoteAmount: bigint, time: string, balance: Balance | null, log: any, receipt: any, balances: Map<string, Balance>, ctx: any) {
+  if (balance) {
+    balance.baseAmount = baseAmount;
+    balance.quoteAmount = quoteAmount;
+    balance.timestamp = time;
+    balances.set(balance.id, balance);
+  } else {
+    ctx.log.warn(`${eventName} NO BALANCE ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} FOR USER: ${getIdentity(log.user)}`);
+  }
+}
