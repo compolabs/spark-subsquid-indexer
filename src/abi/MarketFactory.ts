@@ -8,7 +8,7 @@
   Fuels version: 0.96.1
 */
 
-import { Contract, ContractFactory, decompressBytecode } from "fuels";
+import { type Contract, ContractFactory, decompressBytecode } from "fuels";
 import type { Provider, Account, DeployContractOptions, DeployContractResult } from "fuels";
 
 import { Market } from "./Market";

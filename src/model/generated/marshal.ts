@@ -129,7 +129,7 @@ export function nonNull<T>(val: T | undefined | null): T {
 
 export function enumFromJson<E extends object>(json: unknown, enumObject: E): E[keyof E] {
     assert(typeof json == 'string', 'invalid enum value')
-    let val = (enumObject as any)[json]
+    const val = (enumObject as any)[json]
     assert(typeof val == 'string', `invalid enum value`)
     return val as any
 }

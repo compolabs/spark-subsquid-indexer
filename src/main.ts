@@ -8,21 +8,22 @@ import { handleDepositEvent } from './depositEventHandler'
 import { handleWithdrawEvent } from './withdrawEventHandler'
 import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
 import { getEventType } from './types'
+import type { ActiveBuyOrder, ActiveSellOrder, Balance, CancelOrderEvent, OpenOrderEvent, Order, TradeOrderEvent, WithdrawToMarketEvent, DepositEvent, WithdrawEvent } from './model'
 
 const database = new TypeormDatabase()
 
 run(dataSource, database, async (ctx) => {
 
-    const balances: Map<string, any> = new Map();
-    const orders: Map<string, any> = new Map();
-    const activeBuyOrders: Map<string, any> = new Map();
-    const activeSellOrders: Map<string, any> = new Map();
-    const tradeOrderEvents: Map<string, any> = new Map();
-    const openOrderEvents: Map<string, any> = new Map();
-    const cancelOrderEvents: Map<string, any> = new Map();
-    const depositEvents: Map<string, any> = new Map();
-    const withdrawEvents: Map<string, any> = new Map();
-    const withdrawToMarketEvents: Map<string, any> = new Map();
+    const balances: Map<string, Balance> = new Map();
+    const orders: Map<string, Order> = new Map();
+    const activeBuyOrders: Map<string, ActiveBuyOrder> = new Map();
+    const activeSellOrders: Map<string, ActiveSellOrder> = new Map();
+    const tradeOrderEvents: Map<string, TradeOrderEvent> = new Map();
+    const openOrderEvents: Map<string, OpenOrderEvent> = new Map();
+    const cancelOrderEvents: Map<string, CancelOrderEvent> = new Map();
+    const depositEvents: Map<string, DepositEvent> = new Map();
+    const withdrawEvents: Map<string, WithdrawEvent> = new Map();
+    const withdrawToMarketEvents: Map<string, WithdrawToMarketEvent> = new Map();
 
     const { receipts, logs } = await processBlocks(ctx);
 

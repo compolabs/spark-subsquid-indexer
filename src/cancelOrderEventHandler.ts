@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
 import type { CancelOrderEventOutput } from './abi/Market';
-import { CancelOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType} from './model';
+import { CancelOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, type Order, type Balance} from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, getHash, lookupBuyOrder, lookupSellOrder, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receipt: any, cancelOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receipt: any, cancelOrderEvents: Map<string, CancelOrderEvent>, orders: Map<string, Order>, activeBuyOrders: Map<string, ActiveBuyOrder>, activeSellOrders: Map<string, ActiveSellOrder>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the CancelOrderEvent and save in context for tracking
   const event = new CancelOrderEvent({

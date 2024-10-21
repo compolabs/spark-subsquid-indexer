@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
 import type { TradeOrderEventOutput } from './abi/Market';
-import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
+import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, type Order, type Balance } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, TradeOrderEvent>, orders: Map<string, Order>, activeBuyOrders: Map<string, ActiveBuyOrder>, activeSellOrders: Map<string, ActiveSellOrder>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the TradeOrderEvent and save in context for tracking
   const event = new TradeOrderEvent({

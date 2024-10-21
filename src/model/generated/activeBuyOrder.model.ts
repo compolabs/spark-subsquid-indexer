@@ -1,6 +1,6 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, BigIntColumn as BigIntColumn_, Index as Index_, StringColumn as StringColumn_} from "@subsquid/typeorm-store"
-import {OrderType} from "./_orderType"
-import {OrderStatus} from "./_orderStatus"
+import type {OrderType} from "./_orderType"
+import type {OrderStatus} from "./_orderStatus"
 
 @Entity_()
 export class ActiveBuyOrder {

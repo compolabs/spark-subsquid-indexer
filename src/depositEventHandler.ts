@@ -3,7 +3,7 @@ import type { DepositEventOutput } from './abi/Market';
 import { DepositEvent, Balance } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
 
-export async function handleDepositEvent(log: DepositEventOutput, receipt: any, depositEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleDepositEvent(log: DepositEventOutput, receipt: any, depositEvents: Map<string, DepositEvent>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the DepositEvent and save in context for tracking
   const event = new DepositEvent({

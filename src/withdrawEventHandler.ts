@@ -1,10 +1,10 @@
 import { nanoid } from 'nanoid';
 import type { WithdrawEventOutput } from './abi/Market';
-import { WithdrawEvent } from './model';
+import { type Balance, WithdrawEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, WithdrawEvent>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the WithdrawEvent and save in context for tracking
   const event = new WithdrawEvent({
