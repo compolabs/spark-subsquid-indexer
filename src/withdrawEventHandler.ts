@@ -1,12 +1,14 @@
+import { nanoid } from 'nanoid';
 import type { WithdrawEventOutput } from './abi/Market';
-import { WithdrawEvent } from './model';
-import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
+import { type Balance, WithdrawEvent } from './model';
+import tai64ToDate, { getHash, getIdentity, lookupBalance, updateUserBalance } from './utils';
+import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any, withdrawEvents: Map<string, WithdrawEvent>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the WithdrawEvent and save in context for tracking
   const event = new WithdrawEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     user: getIdentity(log.user),
     amount: BigInt(log.amount.toString()),
@@ -19,15 +21,8 @@ export async function handleWithdrawEvent(log: WithdrawEventOutput, receipt: any
   withdrawEvents.set(event.id, event)
 
   // Retrieve the user's balance
-  const balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
+  const balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
 
   // If a balance exists, update it with the new base and quote amounts
-  if (balance) {
-    balance.baseAmount = BigInt(log.account.liquid.base.toString());
-    balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
-    balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(balance.id, balance);
-  } else {
-    ctx.log.warn(`NO BALANCE WITHDRAW FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
+  updateUserBalance("WITHDRAW", BigInt(log.account.liquid.base.toString()), BigInt(log.account.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), balance, log, receipt, balances, ctx);
 }

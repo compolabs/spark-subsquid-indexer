@@ -10,12 +10,8 @@ export const getHash = (data: string) => {
 };
 
 export default function tai64ToDate(num: bigint) {
-	const dateStr = new BN(
-		(num - BigInt(2 ** 62) - BigInt(10)).toString(),
-	)
-		.mul(new BN(1000))
-		.toString();
-	return new Date(+dateStr);
+ const dateStr = new BN((num - BigInt(2 ** 62) - BigInt(10)).toString()).mul(new BN(1000)).toString();
+ return new Date(+dateStr);
 }
 
 export async function lookupOrder(
@@ -80,4 +76,15 @@ export async function lookupBalance(
 		}
 	}
 	return balance;
+}
+
+export function updateUserBalance(eventName: string, baseAmount: bigint, quoteAmount: bigint, time: string, balance: Balance | null, log: any, receipt: any, balances: Map<string, Balance>, ctx: any) {
+  if (balance) {
+    balance.baseAmount = baseAmount;
+    balance.quoteAmount = quoteAmount;
+    balance.timestamp = time;
+    balances.set(balance.id, balance);
+  } else {
+    ctx.log.warn(`${eventName} NO BALANCE ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} FOR USER: ${getIdentity(log.user)}`);
+  }
 }

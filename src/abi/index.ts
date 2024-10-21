@@ -5,8 +5,8 @@
 /* eslint-disable @typescript-eslint/consistent-type-imports */
 
 /*
-  Fuels version: 0.94.9
+  Fuels version: 0.96.1
 */
 
-export { Market } from "./Market";
-export { MarketFactory } from "./MarketFactory";
+export { Market } from './Market';
+export { MarketFactory } from './MarketFactory';

@@ -83,6 +83,7 @@ type TradeOrderEvent @entity {
   tradePrice: BigInt! @index
   seller: String! @index
   buyer: String! @index
+  sellerIsMaker: Boolean! @index
   sellerBaseAmount: BigInt!
   sellerQuoteAmount: BigInt!
   buyerBaseAmount: BigInt!
@@ -96,19 +97,6 @@ type DepositEvent @entity {
   id: ID!
   market: String! @index
   user: String! @index
-  amount: BigInt! @index
-  baseAmount: BigInt! 
-  quoteAmount: BigInt!
-  asset: String! @index
-  txId: String!
-  timestamp: String!
-}
-
-type DepositForEvent @entity {
-  id: ID!
-  market: String! @index
-  user: String! @index
-  caller: String! @index
   amount: BigInt! @index
   baseAmount: BigInt! 
   quoteAmount: BigInt!

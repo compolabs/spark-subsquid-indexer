@@ -1,30 +1,29 @@
-import { run } from "@subsquid/batch-processor";
-import { TypeormDatabase } from "@subsquid/typeorm-store";
-import { handleCancelOrderEvent } from "./cancelOrderEventHandler";
-import { dataSource, processBlocks } from "./dataSource";
-import { handleDepositEvent } from "./depositEventHandler";
-import { handleDepositForEvent } from "./depositForEventHandler";
-import { handleOpenOrderEvent } from "./openOrderEventHandler";
-import { handleTradeOrderEvent } from "./tradeOrderEventHandler";
-import { getEventType } from "./types";
-import { handleWithdrawEvent } from "./withdrawEventHandler";
-import { handleWithdrawToMarketEvent } from "./withdrawToMarketEventHandler";
+import { run } from '@subsquid/batch-processor'
+import { TypeormDatabase } from '@subsquid/typeorm-store'
+import { dataSource, processBlocks } from './dataSource'
+import { handleOpenOrderEvent } from './openOrderEventHandler'
+import { handleTradeOrderEvent } from './tradeOrderEventHandler'
+import { handleCancelOrderEvent } from './cancelOrderEventHandler'
+import { handleDepositEvent } from './depositEventHandler'
+import { handleWithdrawEvent } from './withdrawEventHandler'
+import { handleWithdrawToMarketEvent } from './withdrawToMarketEventHandler'
+import { getEventType } from './types'
+import type { ActiveBuyOrder, ActiveSellOrder, Balance, CancelOrderEvent, OpenOrderEvent, Order, TradeOrderEvent, WithdrawToMarketEvent, DepositEvent, WithdrawEvent } from './model'
 
 const database = new TypeormDatabase();
 
 run(dataSource, database, async (ctx) => {
 
-    const balances: Map<string, any> = new Map();
-    const orders: Map<string, any> = new Map();
-    const activeBuyOrders: Map<string, any> = new Map();
-    const activeSellOrders: Map<string, any> = new Map();
-    const tradeOrderEvents: Map<string, any> = new Map();
-    const openOrderEvents: Map<string, any> = new Map();
-    const cancelOrderEvents: Map<string, any> = new Map();
-    const depositEvents: Map<string, any> = new Map();
-    const depositForEvents: Map<string, any> = new Map();
-    const withdrawEvents: Map<string, any> = new Map();
-    const withdrawToMarketEvents: Map<string, any> = new Map();
+    const balances: Map<string, Balance> = new Map();
+    const orders: Map<string, Order> = new Map();
+    const activeBuyOrders: Map<string, ActiveBuyOrder> = new Map();
+    const activeSellOrders: Map<string, ActiveSellOrder> = new Map();
+    const tradeOrderEvents: Map<string, TradeOrderEvent> = new Map();
+    const openOrderEvents: Map<string, OpenOrderEvent> = new Map();
+    const cancelOrderEvents: Map<string, CancelOrderEvent> = new Map();
+    const depositEvents: Map<string, DepositEvent> = new Map();
+    const withdrawEvents: Map<string, WithdrawEvent> = new Map();
+    const withdrawToMarketEvents: Map<string, WithdrawToMarketEvent> = new Map();
 
 	const { receipts, logs } = await processBlocks(ctx);
 
@@ -41,8 +40,6 @@ run(dataSource, database, async (ctx) => {
             await handleCancelOrderEvent(log, receipt, cancelOrderEvents, orders, activeBuyOrders, activeSellOrders, balances, ctx);
         } else if (event === 'DepositEvent') {
             await handleDepositEvent(log, receipt, depositEvents, balances, ctx);
-        } else if (event === 'DepositForEvent') {
-            await handleDepositForEvent(log, receipt, depositForEvents, balances, ctx);
         } else if (event === 'WithdrawEvent') {
             await handleWithdrawEvent(log, receipt, withdrawEvents, balances, ctx);
         } else if (event === 'WithdrawToMarketEvent') {
@@ -50,15 +47,14 @@ run(dataSource, database, async (ctx) => {
         }
     }
 
-	await ctx.store.upsert([...balances.values()]);
-	await ctx.store.upsert([...orders.values()]);
-	await ctx.store.upsert([...activeBuyOrders.values()]);
-	await ctx.store.upsert([...activeSellOrders.values()]);
-	await ctx.store.save([...tradeOrderEvents.values()]);
-	await ctx.store.save([...openOrderEvents.values()]);
-	await ctx.store.save([...cancelOrderEvents.values()]);
-	await ctx.store.save([...depositEvents.values()]);
-	await ctx.store.save([...depositForEvents.values()]);
-	await ctx.store.save([...withdrawEvents.values()]);
-	await ctx.store.save([...withdrawToMarketEvents.values()]);
-});
+    await ctx.store.upsert([...balances.values()])
+    await ctx.store.upsert([...orders.values()])
+    await ctx.store.upsert([...activeBuyOrders.values()])
+    await ctx.store.upsert([...activeSellOrders.values()])
+    await ctx.store.save([...tradeOrderEvents.values()])
+    await ctx.store.save([...openOrderEvents.values()])
+    await ctx.store.save([...cancelOrderEvents.values()])
+    await ctx.store.save([...depositEvents.values()])
+    await ctx.store.save([...withdrawEvents.values()])
+    await ctx.store.save([...withdrawToMarketEvents.values()])
+})

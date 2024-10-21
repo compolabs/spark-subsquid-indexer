@@ -1,12 +1,16 @@
+import { nanoid } from 'nanoid';
 import type { WithdrawToMarketEventOutput } from './abi/Market';
-import { WithdrawToMarketEvent } from './model';
-import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
+import { type Balance, WithdrawToMarketEvent } from './model';
+import tai64ToDate, { getHash, getIdentity, lookupBalance, updateUserBalance } from './utils';
+import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutput, receipt: any, withdrawToMarketEvents: Map<string, any>, balances: Map<string, any>, ctx: any) {
+type NewType = Map<string, Balance>;
+
+export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutput, receipt: any, withdrawToMarketEvents: Map<string, WithdrawToMarketEvent>, balances: NewType, ctx: any) {
 
   // Construct the WithdrawToMarketEvent and save in context for tracking
   const event = new WithdrawToMarketEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     toMarket: log.market.bits,
     user: getIdentity(log.user),
@@ -20,15 +24,9 @@ export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutp
   withdrawToMarketEvents.set(event.id, event)
 
   // Retrieve the user's balance
-  const balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
+  const balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
 
   // If a balance exists, update it with the new base and quote amounts
-  if (balance) {
-    balance.baseAmount = BigInt(log.account.liquid.base.toString());
-    balance.quoteAmount = BigInt(log.account.liquid.quote.toString());
-    balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(balance.id, balance);
-  } else {
-    ctx.log.warn(`NO BALANCE WITHDRAW_TO FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
+  updateUserBalance("WITHDRAW_TO", BigInt(log.account.liquid.base.toString()), BigInt(log.account.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), balance, log, receipt, balances, ctx);
+
 }

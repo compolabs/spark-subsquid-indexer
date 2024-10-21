@@ -1,13 +1,14 @@
+import { nanoid } from 'nanoid';
 import type { OpenOrderEventOutput } from './abi/Market';
-import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
-import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
+import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent, type Balance } from './model';
+import tai64ToDate, { getHash, getIdentity, lookupBalance, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: any, openOrderEvents: Map<string, OpenOrderEvent>, orders: Map<string, Order>, activeBuyOrders: Map<string, ActiveBuyOrder>, activeSellOrders: Map<string, ActiveSellOrder>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the OpenOrderEvent and save in context for tracking
   const event = new OpenOrderEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     orderId: log.order_id,
     orderType: log.order_type as unknown as OrderType,
@@ -44,12 +45,5 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
   }
 
   // If a balance exists, update it with the new base and quote amounts
-  if (balance) {
-    balance.baseAmount = BigInt(log.balance.liquid.base.toString());
-    balance.quoteAmount = BigInt(log.balance.liquid.quote.toString());
-    balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(balance.id, balance);
-  } else {
-    ctx.log.warn(`NO BALANCE OPEN FOR USER: ${getIdentity(log.user)} BALANCE ID: ${getHash(`${getIdentity(log.user)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
+  updateUserBalance("OPEN", BigInt(log.balance.liquid.base.toString()), BigInt(log.balance.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), balance, log, receipt, balances, ctx);
 }

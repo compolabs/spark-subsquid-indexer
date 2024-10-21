@@ -1,13 +1,14 @@
+import { nanoid } from 'nanoid';
 import type { TradeOrderEventOutput } from './abi/Market';
-import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
-import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash } from './utils';
+import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, type Order, type Balance } from './model';
+import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash, updateUserBalance } from './utils';
 import { assertNotNull } from '@subsquid/util-internal'
 
-export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, any>, orders: Map<string, any>, activeBuyOrders: Map<string, any>, activeSellOrders: Map<string, any>, balances: Map<string, any>, ctx: any) {
+export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt: any, tradeOrderEvents: Map<string, TradeOrderEvent>, orders: Map<string, Order>, activeBuyOrders: Map<string, ActiveBuyOrder>, activeSellOrders: Map<string, ActiveSellOrder>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the TradeOrderEvent and save in context for tracking
   const event = new TradeOrderEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     sellOrderId: log.base_sell_order_id,
     buyOrderId: log.base_buy_order_id,
@@ -15,6 +16,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
     tradePrice: BigInt(log.trade_price.toString()),
     seller: getIdentity(log.order_seller),
     buyer: getIdentity(log.order_buyer),
+    sellerIsMaker: log.seller_is_maker,
     sellerBaseAmount: BigInt(log.s_balance.liquid.base.toString()),
     sellerQuoteAmount: BigInt(log.s_balance.liquid.quote.toString()),
     buyerBaseAmount: BigInt(log.b_balance.liquid.base.toString()),
@@ -24,17 +26,19 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   })
   tradeOrderEvents.set(event.id, event)
 
-  // Retrieve the buy and sell orders
+  // Retrieve the active buy and active sell orders
   const sellActiveOrder = assertNotNull(await lookupSellOrder(ctx.store, activeSellOrders, log.base_sell_order_id))
-  const sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
   const buyActiveOrder = assertNotNull(await lookupBuyOrder(ctx.store, activeBuyOrders, log.base_buy_order_id))
+
+  // Retrieve the buy and sell orders
+  const sellOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_sell_order_id))
   const buyOrder = assertNotNull(await lookupOrder(ctx.store, orders, log.base_buy_order_id))
 
-  // Retrieve the balances for both the seller and the buyer
-  const seller_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
-  const buyer_balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
+  // Retrieve the balances for buyer and seller
+  const sellerBalance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)))
+  const buyerBalance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)))
 
-  // Update the sell active order status to "Closed" if fully executed, otherwise "Active"
+  // Update the active sell order status to "Closed" if fully executed, otherwise "Active"
   if (sellActiveOrder) {
     const updatedActiveSellAmount = sellActiveOrder.amount - event.tradeSize
     const isActiveSellOrderClosed = updatedActiveSellAmount === 0n
@@ -54,7 +58,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
     ctx.log.warn(`NO ACTIVE SELL ORDER TRADE FOR USER: ${getIdentity(log.order_seller)} ORDER ID: ${log.base_sell_order_id} MARKET: ${receipt.id}.`);
   }
 
-  // Update the buy active order status to "Closed" if fully executed, otherwise "Active"
+  // Update the active buy order status to "Closed" if fully executed, otherwise "Active"
   if (buyActiveOrder) {
     const updatedActiveBuyAmount = buyActiveOrder.amount - event.tradeSize
     const isActiveBuyOrderClosed = updatedActiveBuyAmount === 0n
@@ -95,24 +99,8 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
   } else {
     ctx.log.warn(`NO BUY ORDER TRADE FOR USER: ${getIdentity(log.order_buyer)} ORDER ID: ${log.base_buy_order_id} MARKET: ${receipt.id}.`);
   }
-
-  // Update the seller's balance with the new base and quote amounts
-  if (seller_balance) {
-    seller_balance.baseAmount = BigInt(log.s_balance.liquid.base.toString());
-    seller_balance.quoteAmount = BigInt(log.s_balance.liquid.quote.toString());
-    seller_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(seller_balance.id, seller_balance);
-  } else {
-    ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_seller)} BALANCE ID: ${getHash(`${getIdentity(log.order_seller)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
-
-  // Update the buyer's balance with the new base and quote amounts
-  if (buyer_balance) {
-    buyer_balance.baseAmount = BigInt(log.b_balance.liquid.base.toString());
-    buyer_balance.quoteAmount = BigInt(log.b_balance.liquid.quote.toString());
-    buyer_balance.timestamp = tai64ToDate(receipt.time).toISOString();
-    balances.set(buyer_balance.id, buyer_balance);
-  } else {
-    ctx.log.warn(`NO BALANCE TRADE FOR USER: ${getIdentity(log.order_buyer)} BALANCE ID: ${getHash(`${getIdentity(log.order_buyer)}-${receipt.id}`)} MARKET: ${receipt.id}.`);
-  }
+  
+  // Update the buyer and seller balances with the new base and quote amounts
+  updateUserBalance("TRADE", BigInt(log.s_balance.liquid.base.toString()), BigInt(log.s_balance.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), sellerBalance, log, receipt, balances, ctx);
+  updateUserBalance("TRADE", BigInt(log.b_balance.liquid.base.toString()), BigInt(log.b_balance.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), buyerBalance, log, receipt, balances, ctx);
 }
