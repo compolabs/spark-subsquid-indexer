@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import type { WithdrawToMarketEventOutput } from './abi/Market';
 import { WithdrawToMarketEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
@@ -6,7 +7,7 @@ export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutp
 
   // Construct the WithdrawToMarketEvent and save in context for tracking
   const event = new WithdrawToMarketEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     toMarket: log.market.bits,
     user: getIdentity(log.user),

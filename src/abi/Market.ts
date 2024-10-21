@@ -42,8 +42,8 @@ export enum MathErrorInput { Overflow = 'Overflow' };
 export enum MathErrorOutput { Overflow = 'Overflow' };
 export enum OrderChangeTypeInput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
 export enum OrderChangeTypeOutput { OrderOpened = 'OrderOpened', OrderCancelled = 'OrderCancelled', OrderMatched = 'OrderMatched' };
-export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], ZeroOrderAmount: undefined, ZeroLockAmount: undefined, ZeroUnlockAmount: undefined, ZeroTransferAmount: undefined, FailedToRemove: string }>;
-export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], ZeroOrderAmount: void, ZeroLockAmount: void, ZeroUnlockAmount: void, ZeroTransferAmount: void, FailedToRemove: string }>;
+export type OrderErrorInput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BigNumberish, ZeroLockAmount: undefined, ZeroUnlockAmount: undefined, ZeroTransferAmount: undefined, FailedToRemove: string }>;
+export type OrderErrorOutput = Enum<{ OrderDuplicate: string, OrderNotFound: string, PriceTooSmall: [], OrderSizeTooSmall: BN, ZeroLockAmount: void, ZeroUnlockAmount: void, ZeroTransferAmount: void, FailedToRemove: string }>;
 export enum OrderTypeInput { Buy = 'Buy', Sell = 'Sell' };
 export enum OrderTypeOutput { Buy = 'Buy', Sell = 'Sell' };
 export enum ReentrancyErrorInput { NonReentrant = 'NonReentrant' };
@@ -79,6 +79,8 @@ export type SetEpochEventInput = { epoch: BigNumberish, epoch_duration: BigNumbe
 export type SetEpochEventOutput = { epoch: BN, epoch_duration: BN };
 export type SetMatcherRewardEventInput = { amount: BigNumberish };
 export type SetMatcherRewardEventOutput = { amount: BN };
+export type SetMinOrderSizeEventInput = { size: BigNumberish };
+export type SetMinOrderSizeEventOutput = { size: BN };
 export type SetProtocolFeeEventInput = { protocol_fee: Vec<ProtocolFeeInput> };
 export type SetProtocolFeeEventOutput = { protocol_fee: Vec<ProtocolFeeOutput> };
 export type SetStoreOrderChangeInfoEventInput = { store: boolean };
@@ -251,44 +253,49 @@ const abi = {
       "metadataTypeId": 32
     },
     {
+      "type": "struct events::SetMinOrderSizeEvent",
+      "concreteTypeId": "7542dfa693d485551511758498255bf7e73c2835604bdffc22262d0ea2326c16",
+      "metadataTypeId": 33
+    },
+    {
       "type": "struct events::SetProtocolFeeEvent",
       "concreteTypeId": "957dde23e9fbd44b1bada18eae8b84f6d868be2fe55b721ce24b54cdcdafda79",
-      "metadataTypeId": 33
+      "metadataTypeId": 34
     },
     {
       "type": "struct events::SetStoreOrderChangeInfoEvent",
       "concreteTypeId": "34a2b5822332a827c494d0a8cfc543cb5e50d6e02ac23d9886c94f9a7572d18c",
-      "metadataTypeId": 34
+      "metadataTypeId": 35
     },
     {
       "type": "struct events::TradeOrderEvent",
       "concreteTypeId": "fe08cb2392b6eb92ee6b7868e2877ca0630f87f543acc63897f7d806229379d5",
-      "metadataTypeId": 35
+      "metadataTypeId": 36
     },
     {
       "type": "struct events::WithdrawEvent",
       "concreteTypeId": "9787083b0003f388ec6bf30609ff6a10c76fada67314a162841a445b07a17168",
-      "metadataTypeId": 36
+      "metadataTypeId": 37
     },
     {
       "type": "struct events::WithdrawToMarketEvent",
       "concreteTypeId": "ae2f6315bc0c35670e520b82df972bee3ba559d15fb2ef3864cfe265f3802fb6",
-      "metadataTypeId": 37
+      "metadataTypeId": 38
     },
     {
       "type": "struct std::asset_id::AssetId",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "metadataTypeId": 39
+      "metadataTypeId": 40
     },
     {
       "type": "struct std::contract_id::ContractId",
       "concreteTypeId": "29c10735d33b5159f0c71ee1dbd17b36a3e69e41f00fab0d42e1bd9f428d8a54",
-      "metadataTypeId": 40
+      "metadataTypeId": 41
     },
     {
       "type": "struct std::vec::Vec<b256>",
       "concreteTypeId": "32559685d0c9845f059bf9d472a0a38cf77d36c23dfcffe5489e86a65cdd9198",
-      "metadataTypeId": 42,
+      "metadataTypeId": 43,
       "typeArguments": [
         "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
       ]
@@ -296,7 +303,7 @@ const abi = {
     {
       "type": "struct std::vec::Vec<struct data_structures::order_change::OrderChangeInfo>",
       "concreteTypeId": "742fbfc9dbc675c4bb942c1c3d87581f5da5c5a8b0fc21e0d1f8d873328d5e5a",
-      "metadataTypeId": 42,
+      "metadataTypeId": 43,
       "typeArguments": [
         "29bc325768e93baaa35ac6e466461baa03f97fb67a0a328521afacca7d3bf987"
       ]
@@ -304,7 +311,7 @@ const abi = {
     {
       "type": "struct std::vec::Vec<struct data_structures::protocol_fee::ProtocolFee>",
       "concreteTypeId": "4b03eb3d5d8751745804ec649d33055ca43456407d3991177f51a1397cd4da50",
-      "metadataTypeId": 42,
+      "metadataTypeId": 43,
       "typeArguments": [
         "009d87c3f03cbc1373d98411934ee7648a3922e9adcbafd190ce4d1618b6e5a2"
       ]
@@ -393,7 +400,7 @@ const abi = {
       "components": [
         {
           "name": "__tuple_element",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "__tuple_element",
@@ -401,7 +408,7 @@ const abi = {
         },
         {
           "name": "__tuple_element",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "__tuple_element",
@@ -578,8 +585,8 @@ const abi = {
           "typeId": 0
         },
         {
-          "name": "ZeroOrderAmount",
-          "typeId": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d"
+          "name": "OrderSizeTooSmall",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
         },
         {
           "name": "ZeroLockAmount",
@@ -675,11 +682,11 @@ const abi = {
       "components": [
         {
           "name": "Address",
-          "typeId": 38
+          "typeId": 39
         },
         {
           "name": "ContractId",
-          "typeId": 40
+          "typeId": 41
         }
       ]
     },
@@ -868,7 +875,7 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "user",
@@ -894,7 +901,7 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "order_type",
@@ -943,12 +950,22 @@ const abi = {
       ]
     },
     {
-      "type": "struct events::SetProtocolFeeEvent",
+      "type": "struct events::SetMinOrderSizeEvent",
       "metadataTypeId": 33,
       "components": [
         {
+          "name": "size",
+          "typeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ]
+    },
+    {
+      "type": "struct events::SetProtocolFeeEvent",
+      "metadataTypeId": 34,
+      "components": [
+        {
           "name": "protocol_fee",
-          "typeId": 42,
+          "typeId": 43,
           "typeArguments": [
             {
               "name": "",
@@ -960,7 +977,7 @@ const abi = {
     },
     {
       "type": "struct events::SetStoreOrderChangeInfoEvent",
-      "metadataTypeId": 34,
+      "metadataTypeId": 35,
       "components": [
         {
           "name": "store",
@@ -970,7 +987,7 @@ const abi = {
     },
     {
       "type": "struct events::TradeOrderEvent",
-      "metadataTypeId": 35,
+      "metadataTypeId": 36,
       "components": [
         {
           "name": "base_sell_order_id",
@@ -1032,7 +1049,7 @@ const abi = {
     },
     {
       "type": "struct events::WithdrawEvent",
-      "metadataTypeId": 36,
+      "metadataTypeId": 37,
       "components": [
         {
           "name": "amount",
@@ -1040,7 +1057,7 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "user",
@@ -1054,7 +1071,7 @@ const abi = {
     },
     {
       "type": "struct events::WithdrawToMarketEvent",
-      "metadataTypeId": 37,
+      "metadataTypeId": 38,
       "components": [
         {
           "name": "amount",
@@ -1062,7 +1079,7 @@ const abi = {
         },
         {
           "name": "asset",
-          "typeId": 39
+          "typeId": 40
         },
         {
           "name": "user",
@@ -1074,22 +1091,12 @@ const abi = {
         },
         {
           "name": "market",
-          "typeId": 40
+          "typeId": 41
         }
       ]
     },
     {
       "type": "struct std::address::Address",
-      "metadataTypeId": 38,
-      "components": [
-        {
-          "name": "bits",
-          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
-        }
-      ]
-    },
-    {
-      "type": "struct std::asset_id::AssetId",
       "metadataTypeId": 39,
       "components": [
         {
@@ -1099,7 +1106,7 @@ const abi = {
       ]
     },
     {
-      "type": "struct std::contract_id::ContractId",
+      "type": "struct std::asset_id::AssetId",
       "metadataTypeId": 40,
       "components": [
         {
@@ -1109,8 +1116,18 @@ const abi = {
       ]
     },
     {
-      "type": "struct std::vec::RawVec",
+      "type": "struct std::contract_id::ContractId",
       "metadataTypeId": 41,
+      "components": [
+        {
+          "name": "bits",
+          "typeId": "7c5ee1cecf5f8eacd1284feb5f0bf2bdea533a51e2f0c9aabe9236d335989f3b"
+        }
+      ]
+    },
+    {
+      "type": "struct std::vec::RawVec",
+      "metadataTypeId": 42,
       "components": [
         {
           "name": "ptr",
@@ -1127,11 +1144,11 @@ const abi = {
     },
     {
       "type": "struct std::vec::Vec",
-      "metadataTypeId": 42,
+      "metadataTypeId": 43,
       "components": [
         {
           "name": "buf",
-          "typeId": 41,
+          "typeId": 42,
           "typeArguments": [
             {
               "name": "",
@@ -2188,7 +2205,122 @@ const abi = {
         {
           "name": "doc-comment",
           "arguments": [
-            " * When `set_matcher_fee` is same as set before."
+            " * When `matcher_fee` is same as set before."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "read",
+            "write"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [
+        {
+          "name": "size",
+          "concreteTypeId": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0"
+        }
+      ],
+      "name": "set_min_order_size",
+      "output": "2e38e77b22c314a449e91fafed92a43826ac6aa403ae6a8acb6cf58239fbaf5d",
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " Sets the minimum of order amount."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Additional Information"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " This function allows the contract owner to update the minimum of an order amount."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " It checks that the new amount is different from the current one to avoid redundant updates."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " The function is restricted to the contract owner and logs an event after the matcher fee is set."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Arguments"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * `amount`: [u64] The new the minimum of an order amount to be set. It must be different from the current the minimum of an order amount."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Reverts"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * When called by non-owner."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * When `min_order_size` is same as set before."
           ]
         },
         {
@@ -2838,6 +2970,49 @@ const abi = {
           "name": "doc-comment",
           "arguments": [
             " * [u64] - A matcher fee."
+          ]
+        },
+        {
+          "name": "storage",
+          "arguments": [
+            "read"
+          ]
+        }
+      ]
+    },
+    {
+      "inputs": [],
+      "name": "min_order_size",
+      "output": "1506e6f44c1d6291cdf46395a8e573276a4fa79e8ace3fc891e092ef32d1b0a0",
+      "attributes": [
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " Get the minimum order size in BASE_ASSET units."
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " ### Returns"
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            ""
+          ]
+        },
+        {
+          "name": "doc-comment",
+          "arguments": [
+            " * [u64] - A minimum order type size."
           ]
         },
         {
@@ -3545,6 +3720,10 @@ const abi = {
       "concreteTypeId": "090412be710caebee4e019479841ea0100912819a3e1c52ba39b1faa7b778c83"
     },
     {
+      "logId": "8449561757438215509",
+      "concreteTypeId": "7542dfa693d485551511758498255bf7e73c2835604bdffc22262d0ea2326c16"
+    },
+    {
       "logId": "10772010129570911307",
       "concreteTypeId": "957dde23e9fbd44b1bada18eae8b84f6d868be2fe55b721ce24b54cdcdafda79"
     },
@@ -3566,37 +3745,37 @@ const abi = {
     {
       "name": "BASE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 99760
+      "offset": 102384
     },
     {
       "name": "BASE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 99792
+      "offset": 102416
     },
     {
       "name": "QUOTE_ASSET",
       "concreteTypeId": "c0710b6731b1dd59799cf6bef33eee3b3b04a2e40e80a0724090215bbf2ca974",
-      "offset": 99856
+      "offset": 102480
     },
     {
       "name": "QUOTE_ASSET_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 99888
+      "offset": 102512
     },
     {
       "name": "OWNER",
       "concreteTypeId": "192bc7098e2fe60635a9918afb563e4e5419d386da2bdbf0d716b4bc8549802c",
-      "offset": 99800
+      "offset": 102424
     },
     {
       "name": "PRICE_DECIMALS",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 99848
+      "offset": 102472
     },
     {
       "name": "VERSION",
       "concreteTypeId": "d7649d428b9ff33d188ecbf38a7e4d8fd167fa01b2e10fe9a8f9308e52f1d7cc",
-      "offset": 99896
+      "offset": 102520
     }
   ]
 };
@@ -3619,6 +3798,7 @@ export class MarketInterface extends Interface {
     open_order: FunctionFragment;
     set_epoch: FunctionFragment;
     set_matcher_fee: FunctionFragment;
+    set_min_order_size: FunctionFragment;
     set_protocol_fee: FunctionFragment;
     set_store_order_change_info: FunctionFragment;
     withdraw: FunctionFragment;
@@ -3627,6 +3807,7 @@ export class MarketInterface extends Interface {
     config: FunctionFragment;
     get_epoch: FunctionFragment;
     matcher_fee: FunctionFragment;
+    min_order_size: FunctionFragment;
     order: FunctionFragment;
     order_change_info: FunctionFragment;
     order_id: FunctionFragment;
@@ -3655,6 +3836,7 @@ export class Market extends Contract {
     open_order: InvokeFunction<[amount: BigNumberish, order_type: OrderTypeInput, price: BigNumberish], string>;
     set_epoch: InvokeFunction<[epoch: BigNumberish, epoch_duration: BigNumberish], void>;
     set_matcher_fee: InvokeFunction<[amount: BigNumberish], void>;
+    set_min_order_size: InvokeFunction<[size: BigNumberish], void>;
     set_protocol_fee: InvokeFunction<[protocol_fee: Vec<ProtocolFeeInput>], void>;
     set_store_order_change_info: InvokeFunction<[store: boolean], void>;
     withdraw: InvokeFunction<[amount: BigNumberish, asset_type: AssetTypeInput], void>;
@@ -3663,6 +3845,7 @@ export class Market extends Contract {
     config: InvokeFunction<[], [AssetIdOutput, number, AssetIdOutput, number, Option<IdentityOutput>, number, number]>;
     get_epoch: InvokeFunction<[], [BN, BN]>;
     matcher_fee: InvokeFunction<[], BN>;
+    min_order_size: InvokeFunction<[], BN>;
     order: InvokeFunction<[order: string], Option<OrderOutput>>;
     order_change_info: InvokeFunction<[order_id: string], Vec<OrderChangeInfoOutput>>;
     order_id: InvokeFunction<[order_type: OrderTypeInput, owner: IdentityInput, price: BigNumberish, block_height: BigNumberish, order_height: BigNumberish], string>;

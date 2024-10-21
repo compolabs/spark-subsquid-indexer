@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import type { TradeOrderEventOutput } from './abi/Market';
 import { TradeOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, lookupBuyOrder, lookupSellOrder, getHash } from './utils';
@@ -7,7 +8,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
 
   // Construct the TradeOrderEvent and save in context for tracking
   const event = new TradeOrderEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     sellOrderId: log.base_sell_order_id,
     buyOrderId: log.base_buy_order_id,
@@ -15,6 +16,7 @@ export async function handleTradeOrderEvent(log: TradeOrderEventOutput, receipt:
     tradePrice: BigInt(log.trade_price.toString()),
     seller: getIdentity(log.order_seller),
     buyer: getIdentity(log.order_buyer),
+    sellerIsMaker: log.seller_is_maker,
     sellerBaseAmount: BigInt(log.s_balance.liquid.base.toString()),
     sellerQuoteAmount: BigInt(log.s_balance.liquid.quote.toString()),
     buyerBaseAmount: BigInt(log.b_balance.liquid.base.toString()),

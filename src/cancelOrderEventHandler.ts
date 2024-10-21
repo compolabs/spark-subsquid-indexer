@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import type { CancelOrderEventOutput } from './abi/Market';
 import { CancelOrderEvent, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType } from './model';
 import tai64ToDate, { getIdentity, lookupOrder, lookupBalance, getHash, lookupBuyOrder, lookupSellOrder } from './utils';
@@ -7,7 +8,7 @@ export async function handleCancelOrderEvent(log: CancelOrderEventOutput, receip
 
   // Construct the CancelOrderEvent and save in context for tracking
   const event = new CancelOrderEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     orderId: log.order_id,
     user: getIdentity(log.user),

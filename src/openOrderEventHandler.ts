@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import type { OpenOrderEventOutput } from './abi/Market';
 import { Order, OrderStatus, ActiveBuyOrder, ActiveSellOrder, OrderType, OpenOrderEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance } from './utils';
@@ -7,7 +8,7 @@ export async function handleOpenOrderEvent(log: OpenOrderEventOutput, receipt: a
 
   // Construct the OpenOrderEvent and save in context for tracking
   const event = new OpenOrderEvent({
-    id: receipt.receiptId,
+    id: getHash(`${receipt.txId}-${nanoid()}`),
     market: receipt.id,
     orderId: log.order_id,
     orderType: log.order_type as unknown as OrderType,
