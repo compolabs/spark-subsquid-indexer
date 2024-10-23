@@ -1,5 +1,5 @@
 import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, StringColumn as StringColumn_, Index as Index_, BigIntColumn as BigIntColumn_} from "@subsquid/typeorm-store"
-import type {OrderType} from "./_orderType"
+import {OrderType} from "./_orderType"
 
 @Entity_()
 export class OpenOrderEvent {

@@ -22,9 +22,9 @@ function createTypes(abi: JsonAbi) {
     const typeName = concreteTypes.get(type.concreteTypeId)
     assert(typeName)
 
-    if (typeName.startsWith(prefix)) {
-      const name = normalizeName(typeName)
-      events.set(type.logId, name)
+    if (typeName.startsWith('struct events::') || typeName.startsWith('struct sway_libs::')) {
+      const name = normalizeName(typeName);
+      events.set(type.logId, name);
     }
   }
   return events

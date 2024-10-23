@@ -9,13 +9,13 @@ import { Market } from './abi'
 // that defines where to get the data and what data should we get.
 export const dataSource = new DataSourceBuilder()
   // Provide Subsquid Network Gateway URL.
-  .setGateway('https://v2.archive.subsquid.io/network/fuel-testnet')
+  .setGateway('https://v2.archive.subsquid.io/network/fuel-mainnet')
   // Subsquid Network is always about 10000 blocks behind the head.
   // We must use regular GraphQL endpoint to get through the last mile
   // and stay on top of the chain.
   // This is a limitation, and we promise to lift it in the future!
   .setGraphql({
-    url: 'https://testnet.fuel.network/v1/graphql',
+    url: 'https://mainnet.fuel.network/v1/graphql',
     strideConcurrency: 3,
     strideSize: 30,
   })
@@ -39,7 +39,7 @@ export const dataSource = new DataSourceBuilder()
     }
   })
   .setBlockRange({
-    from: 6142500,
+    from: 0,
   })
   .addReceipt({
     type: ['LOG_DATA'],
