@@ -2,11 +2,8 @@ import { nanoid } from 'nanoid';
 import type { WithdrawToMarketEventOutput } from './abi/Market';
 import { type Balance, WithdrawToMarketEvent } from './model';
 import tai64ToDate, { getHash, getIdentity, lookupBalance, updateUserBalance } from './utils';
-import { assertNotNull } from '@subsquid/util-internal'
 
-type NewType = Map<string, Balance>;
-
-export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutput, receipt: any, withdrawToMarketEvents: Map<string, WithdrawToMarketEvent>, balances: NewType, ctx: any) {
+export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutput, receipt: any, withdrawToMarketEvents: Map<string, WithdrawToMarketEvent>, balances: Map<string, Balance>, ctx: any) {
 
   // Construct the WithdrawToMarketEvent and save in context for tracking
   const event = new WithdrawToMarketEvent({
@@ -24,9 +21,8 @@ export async function handleWithdrawToMarketEvent(log: WithdrawToMarketEventOutp
   withdrawToMarketEvents.set(event.id, event)
 
   // Retrieve the user's balance
-  const balance = assertNotNull(await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`)))
+  const balance = await lookupBalance(ctx.store, balances, getHash(`${getIdentity(log.user)}-${receipt.id}`))
 
   // If a balance exists, update it with the new base and quote amounts
-  updateUserBalance("WITHDRAW_TO", BigInt(log.account.liquid.base.toString()), BigInt(log.account.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), balance, log, receipt, balances, ctx);
-
+  updateUserBalance("WITHDRAW_TO", BigInt(log.account.liquid.base.toString()), BigInt(log.account.liquid.quote.toString()), tai64ToDate(receipt.time).toISOString(), balance ?? null, log, receipt, balances, ctx);
 }
